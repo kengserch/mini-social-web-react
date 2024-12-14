@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Filter from "../components/Filter";
 import Hasetag from "../components/Hasetag";
 import PostCard from "../components/PostCard";
 import CreatePostModal from "../components/CreatePostModal";
-import { Link } from "react-router";
+import { AuthContext } from "../AuthContext";
 
 const Home = () => {
+
+    const { userId  } = useContext(AuthContext);
+    
+
     const [isCreatedPostOpen, setCreatePost] = useState(false);
     return (
         <section className="pt-28 lg:pt-28">
