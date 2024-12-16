@@ -1,8 +1,6 @@
 import React, { useState, useContext } from "react";
-import LoginModal from "./LoginModal";
-import RegisterModal from "./RegisterModal";
+import { NavLink } from "react-router";
 import { AuthContext } from "../context/authContext";
-
 
 const Header = () => {
     const [isLoginOpen, setLoginIsOpen] = useState(false);
@@ -22,15 +20,12 @@ const Header = () => {
                 <div className="flex gap-2">
                     {!isAuthenticated ? (
                         <>
-                    <button className="px-4 py-1 bg-lime-300 rounded-3xl" onClick={() => setLoginIsOpen(true)}>
-                        <h1 className="text-black font-medium">LOGIN</h1>
-                    </button>
-                    {isLoginOpen && <LoginModal setLoginIsOpen={setLoginIsOpen} />}
-                    <button className="px-4 py-1 bg-lime-300 rounded-3xl" onClick={() => setRegisterIsOpen(true)}>
-                        <h1 className="text-black font-medium">REGISTER</h1>
-                    </button>
-                    {isRegisterOpen && <RegisterModal setRegisterIsOpen={setRegisterIsOpen} />}
-                    </>
+                            <NavLink to="/login">
+                                <button className="px-4 py-1 bg-lime-300 rounded-3xl">
+                                    <h1 className="text-black font-medium">LOGIN</h1>
+                                </button>
+                            </NavLink>
+                        </>
                     ) : (
                         <button className="px-4 py-1 bg-red-500 rounded-3xl" onClick={handleLogout}>
                             <h1 className="text-white font-medium">LOGOUT</h1>

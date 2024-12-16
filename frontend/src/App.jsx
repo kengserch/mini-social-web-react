@@ -1,13 +1,24 @@
+import { Routes, Route, Navigate } from "react-router";
 import Home from "./pages/Home";
-import Header from "./components/header";
-import {Routes, Route,Navigate } from "react-router";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import HomeLayout from "./layouts/HomeLayout";
+import { useContext } from "react";
+import { AuthContext } from "./context/authContext";
+
 function App() {
+    const { isAuthenticated } = useContext(AuthContext);
     return (
         <>
-            <Header />
             <Routes>
-                <Route path="/" element={<Navigate replace to="/webboards" />} />
-                <Route path="/webboards" element={<Home />} />
+                <Route element={<HomeLayout />}>
+                    <Route index element={<Home />} />
+                </Route>
+
+                <Route>
+                    <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+                    <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
+                </Route>
             </Routes>
         </>
     );

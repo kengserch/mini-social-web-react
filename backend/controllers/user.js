@@ -10,9 +10,9 @@ export const registerUser = asyncHandler(async (req, res) => {
         res.status(400).send({ message: "All fields are required!" });
         return;
     }
-    const userAvailable = await db.query('SELECT * FROM "user" WHERE username = $1 or email = $2' , [username,email])
+    const userAvailable = await db.query('SELECT * FROM "user" WHERE username = $1 or email = $2', [username, email]);
 
-    if (userAvailable) {
+    if (userAvailable.rows.length > 0) {
         res.status(400).send({ message: "Username or Email already registered!" });
         return;
     }
@@ -21,7 +21,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const hash = bcrypt.hashSync(password, salt);
 
     const result = await db.query('INSERT INTO "user" (username, email, password) VALUES ($1, $2, $3) RETURNING user_id', [username, email, hash]);
-    res.status(201).send({ status: 'ok' ,message: "User added successfully!", userId: result.rows[0].user_id });
+    res.status(201).send({ status: "ok", message: "User added successfully!", userId: result.rows[0].user_id });
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -45,6 +45,5 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     const token = jwt.sign({ userId: user.user_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-
-    res.status(200).json({ status: 'ok' , message: 'Login Successful' , token});
+    res.status(200).json({ status: "ok", message: "Login Successful", token });
 });

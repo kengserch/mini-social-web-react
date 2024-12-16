@@ -1,8 +1,11 @@
-import React, { useState , useContext } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
+import { useNavigate, Link } from "react-router";
 
-const LoginModal = ({ setLoginIsOpen }) => {
+const Login = () => {
+    let navigate = useNavigate();
+
     const [inputs, setInputs] = useState({
         email: "",
         password: "",
@@ -20,10 +23,10 @@ const LoginModal = ({ setLoginIsOpen }) => {
             if (response.data.status === "ok") {
                 localStorage.setItem("token", response.data.token);
                 setIsAuthenticated(true);
-                setLoginIsOpen(false);
+                navigate("/");
             } else {
                 //alert("Login failed: " + response.data.message);
-                console.log("Login failed")
+                console.log("Login failed");
             }
         } catch (error) {
             console.error("Login error:", error);
@@ -33,17 +36,14 @@ const LoginModal = ({ setLoginIsOpen }) => {
 
     return (
         <>
-            <div className="wrapper-model" onClick={() => setLoginIsOpen(false)}>
-                <div className="modal" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end pr-4 pt-3">
-                        <button className="text-white" onClick={() => setLoginIsOpen(false)}>
-                            X
-                        </button>
-                    </div>
+            <div className="wrapper-form">
+                <div className="form">
                     <div className="flex justify-center">
-                        <figure className="w-32 h-auto">
-                            <img src="/images/webboard-logo.png" />
-                        </figure>
+                        <Link to="/">
+                            <figure className="w-32 h-auto">
+                                <img src="/images/webboard-logo.png" />
+                            </figure>
+                        </Link>
                     </div>
                     <div className="flex p-4 flex-col gap-3 justify-center mt-6">
                         <h1 className="text-center">LOGIN</h1>
@@ -61,10 +61,16 @@ const LoginModal = ({ setLoginIsOpen }) => {
                             <h1 className="text-black font-medium">Login</h1>
                         </button>
                     </div>
+                    <div className="flex gap-2">
+                        <h1>Not registered?</h1>
+                        <Link to="/register">
+                            <h1 className="text-blue-500">Create an account.</h1>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </>
     );
 };
 
-export default LoginModal;
+export default Login;

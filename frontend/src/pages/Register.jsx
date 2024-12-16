@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate, Link } from "react-router";
 
-const RegisterModal = ({ setRegisterIsOpen }) => {
+const Register = () => {
+    let navigate = useNavigate();
     const [inputs, setInputs] = useState({
         email: "",
         username: "",
@@ -27,7 +29,7 @@ const RegisterModal = ({ setRegisterIsOpen }) => {
             });
             if (response.data.status === "ok") {
                 alert("Register Success");
-                setRegisterIsOpen(false);
+                navigate("/login");
             } else {
                 alert("Register failed: " + response.data.message);
                 console.log("Login failed");
@@ -44,17 +46,21 @@ const RegisterModal = ({ setRegisterIsOpen }) => {
 
     return (
         <>
-            <div className="wrapper-model" onClick={() => setRegisterIsOpen(false)}>
-                <div className="modal" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end pr-4 pt-3">
-                        <button className="text-white" onClick={() => setRegisterIsOpen(false)}>
-                            X
+            <div className="wrapper-form">
+                <div className="form">
+                    <div className="flex justify-start pr-4 pt-3">
+                      <Link to="/login">
+                        <button className="text-white">
+                            back
                         </button>
+                        </Link>
                     </div>
                     <div className="flex justify-center">
-                        <figure className="w-32 h-auto">
-                            <img src="/images/webboard-logo.png" />
-                        </figure>
+                        <Link to="/">
+                            <figure className="w-32 h-auto">
+                                <img src="/images/webboard-logo.png" />
+                            </figure>
+                        </Link>
                     </div>
 
                     <div className="flex p-4 flex-col gap-3 justify-center mt-6">
@@ -87,4 +93,4 @@ const RegisterModal = ({ setRegisterIsOpen }) => {
     );
 };
 
-export default RegisterModal;
+export default Register;

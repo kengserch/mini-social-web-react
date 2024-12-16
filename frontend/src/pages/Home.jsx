@@ -4,8 +4,10 @@ import Hasetag from "../components/Hasetag";
 import PostCard from "../components/PostCard";
 import CreatePostModal from "../components/CreatePostModal";
 import { AuthContext } from "../context/authContext";
+import { useNavigate} from "react-router";
 
 const Home = () => {
+    let navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const [isCreatedPostOpen, setCreatePost] = useState(false);
 
@@ -14,6 +16,7 @@ const Home = () => {
             setCreatePost(true);
         } else {
             alert("Please log in to create a post.");
+            navigate("/login");
         }
     };
 

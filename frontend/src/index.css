@@ -20,6 +20,13 @@ body{
   @apply  w-96 h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
 }
 
+.wrapper-form {
+  @apply fixed inset-0 flex justify-center items-center z-0
+}
+.form{
+  @apply  w-96 h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
+}
+
 .post-modal{
   @apply  w-[500px] h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
 }
