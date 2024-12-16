@@ -10,12 +10,18 @@ export const registerUser = asyncHandler(async (req, res) => {
         res.status(400).send({ message: "All fields are required!" });
         return;
     }
+    const userAvailable = await db.query('SELECT * FROM "user" WHERE username = $1 or email = $2' , [username,email])
+
+    if (userAvailable) {
+        res.status(400).send({ message: "Username or Email already registered!" });
+        return;
+    }
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
     const result = await db.query('INSERT INTO "user" (username, email, password) VALUES ($1, $2, $3) RETURNING user_id', [username, email, hash]);
-    res.status(201).send({ message: "User added successfully!", userId: result.rows[0].user_id });
+    res.status(201).send({ status: 'ok' ,message: "User added successfully!", userId: result.rows[0].user_id });
 });
 
 export const loginUser = asyncHandler(async (req, res) => {

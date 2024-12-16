@@ -3,14 +3,20 @@ import Filter from "../components/Filter";
 import Hasetag from "../components/Hasetag";
 import PostCard from "../components/PostCard";
 import CreatePostModal from "../components/CreatePostModal";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../context/authContext";
 
 const Home = () => {
-
-    const { userId  } = useContext(AuthContext);
-    
-
+    const { isAuthenticated } = useContext(AuthContext);
     const [isCreatedPostOpen, setCreatePost] = useState(false);
+
+    const handleCreatePostClick = () => {
+        if (isAuthenticated) {
+            setCreatePost(true);
+        } else {
+            alert("Please log in to create a post.");
+        }
+    };
+
     return (
         <section className="pt-28 lg:pt-28">
             <div className="container max-w-screen-xl mx-auto items-center">
@@ -18,7 +24,7 @@ const Home = () => {
                     <Filter />
                     <div className="col-span-2 flex flex-col p-4 h-auto rounded-xl">
                         <div className="flex justify-end">
-                            <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={() => setCreatePost(true)}>
+                            <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={handleCreatePostClick}>
                                 <h1 className="text-black font-medium">Create post</h1>
                             </button>
                             {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} />}
