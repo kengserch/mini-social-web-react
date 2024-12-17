@@ -49,8 +49,12 @@ export const updateProfile = [
 
         if (existingProfile.rows.length > 0) {
             // ถ้ามีอยู่แล้ว ให้ทำการอัปเดต
-            const query = `UPDATE profile SET full_name = $1, bio = $2, avatar_url = COALESCE($3, avatar_url), created_at = NOW() WHERE user_id = $4 RETURNING *;
-      `;
+            const query = `UPDATE profile SET 
+                            full_name = $1, 
+                            bio = $2, 
+                            avatar_url = COALESCE($3, avatar_url), 
+                            created_at = NOW() 
+                            WHERE user_id = $4 RETURNING *; `;
             const result = await db.query(query, [full_name, bio, avatarUrl, user_id]);
 
             return res.status(200).json({
@@ -75,10 +79,10 @@ export const updateProfile = [
 export const getProfile = asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const result = await db.query(
-        `SELECT profile.full_name, profile.avatar_url, profile.bio, "user".username, "user".email
-       FROM profile
-       INNER JOIN "user" ON profile.user_id = "user".user_id
-       WHERE profile.user_id = $1`,
+        `SELECT profile.full_name, profile.avatar_url, profile.bio, users.username, users.email
+        FROM profile
+        INNER JOIN users ON profile.user_id = users.user_id
+        WHERE profile.user_id = $1`,
         [userId]
     );
 

@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
+import axios from "axios";
 import { AuthContext } from "../context/authContext";
 
 const Header = () => {
-    const { isAuthenticated, handleLogout,userId } = useContext(AuthContext);
+    const { isAuthenticated, handleLogout,userId , isLoading } = useContext(AuthContext);
     const [showMenu, setShowMenu] = useState(false);
+    const [profileData, setProfileData] = useState(null);
+
     const navigate = useNavigate();
 
     const menuToggle = () => {
@@ -15,6 +18,31 @@ const Header = () => {
         setShowMenu(false);
         navigate("/profile");
     };
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+                if (response.data.profile) {
+                    setProfileData(response.data.profile);
+                    console.log(response.data.profile)
+                } else {
+                    console.error("Profile not found");
+                }
+            } catch (err) {
+                console.error("Error fetching profile data:", err);
+            }
+        };
+        fetchProfile();
+    }, [userId]);
+
+    if (isLoading || !userId || !profileData) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-lg text-gray-500">Loading ...</p>
+            </div>
+        );
+    }
 
 
     return (
@@ -41,9 +69,9 @@ const Header = () => {
                             <div className="relative">
                                 <div className="flex items-center gap-3 cursor-pointer" onClick={menuToggle}>
                                     <figure className="img-box w-10 h-10 rounded-full ring-2 ring-blue-500 relative">
-                                        <img src="./images/hand-drawn.avif" className="img-cover" />
+                                        <img src={profileData.avatar_url ? profileData.avatar_url : "./images/hand-drawn.avif"} alt="Profile Avatar" className="img-cover" />
                                     </figure>
-                                    <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-10 rounded-3xl">Author Name</h1>
+                                    <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData.username || "Username"}</h1>
                                 </div>
                                 <div className={`w-44 h-auto bg-zinc-900 absolute rounded-lg inset-x-0 mt-2 origin-top transform transition-transform ease-in-out duration-75 ${showMenu ? "scale-y-100" : "scale-y-0"} `}>
                                     <div className="flex px-2 py-1 flex-col gap-1 cursor-pointer">

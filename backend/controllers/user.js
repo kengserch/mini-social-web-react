@@ -10,7 +10,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         res.status(400).send({ message: "All fields are required!" });
         return;
     }
-    const userAvailable = await db.query('SELECT * FROM "user" WHERE username = $1 or email = $2', [username, email]);
+    const userAvailable = await db.query('SELECT * FROM users WHERE username = $1 or email = $2', [username, email]);
 
     if (userAvailable.rows.length > 0) {
         res.status(400).send({ message: "Username or Email already registered!" });
@@ -20,14 +20,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
-    const result = await db.query('INSERT INTO "user" (username, email, password) VALUES ($1, $2, $3) RETURNING user_id', [username, email, hash]);
+    const result = await db.query(`INSERT INTO users (username, email, password) 
+                                    VALUES ($1, $2, $3) RETURNING user_id`, 
+                                    [username, email, hash]);
     res.status(201).send({ status: "ok", message: "User added successfully!", userId: result.rows[0].user_id });
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const result = await db.query('SELECT * FROM "user" WHERE email = $1', [email]);
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
 
     if (result.rows.length === 0) {
         res.status(401).send({ message: "Invalid credentials!" });
