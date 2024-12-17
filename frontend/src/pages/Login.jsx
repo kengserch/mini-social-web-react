@@ -23,7 +23,7 @@ const Login = () => {
             if (response.data.status === "ok") {
                 localStorage.setItem("token", response.data.token);
                 setIsAuthenticated(true);
-                navigate("/");
+                location.href = "/"
             } else {
                 //alert("Login failed: " + response.data.message);
                 console.log("Login failed");

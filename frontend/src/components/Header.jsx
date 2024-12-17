@@ -1,21 +1,21 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/authContext";
 
 const Header = () => {
-    const { isAuthenticated, handleLogout } = useContext(AuthContext);
+    const { isAuthenticated, handleLogout,userId } = useContext(AuthContext);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
 
     const menuToggle = () => {
         setShowMenu((prev) => !prev);
-        console.log(showMenu);
     };
 
     const handleProfileClick = () => {
         setShowMenu(false);
         navigate("/profile");
     };
+
 
     return (
         <header className="fixed top-0 left-0 w-full h-20 flex items-center z-40 bg-zinc-950">
