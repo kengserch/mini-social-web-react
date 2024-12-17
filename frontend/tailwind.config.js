@@ -6,7 +6,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      'sans': ['Ubuntu', 'sans-serif']
+      'sans': ['Lato', 'sans-serif']
     },
   },
   plugins: [],

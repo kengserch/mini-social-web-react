@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(false);
             setUserId(null);
         }
+        setIsLoading(false); 
     }, []);
 
     const handleLogout = () => {
@@ -37,5 +39,5 @@ export const AuthProvider = ({ children }) => {
         console.log("Logged out successfully.");
     };
 
-    return <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userId, handleLogout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userId, handleLogout, isLoading }}>{children}</AuthContext.Provider>;
 };
