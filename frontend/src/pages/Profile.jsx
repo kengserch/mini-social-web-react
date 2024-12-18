@@ -57,7 +57,7 @@ const Profile = () => {
                 <button className="px-4 py-1 bg-lime-300 rounded-3xl" onClick={handleProfile}>
                     <h1 className="text-black font-bold">Create Profile</h1>
                 </button>
-                {isProfile && <ProfileModal setProfile={setProfile} />}
+                {isProfile && <ProfileModal setProfile={setProfile}/>}
             </div>
         );
     }
@@ -69,17 +69,17 @@ const Profile = () => {
                     <button className="px-4 py-1 bg-lime-300 rounded-3xl" onClick={handleProfile}>
                         <h1 className="text-black font-bold">Edit Profile</h1>
                     </button>
-                    {isProfile && <ProfileModal setProfile={setProfile} />}
+                    {isProfile && <ProfileModal setProfile={setProfile} profileData={profileData}  />}
                 </div>
 
                 <div className="flex flex-col items-center gap-4">
-                    <h1 className="text-xl mt-3">{profileData.full_name || "Fullname"}</h1>
+                    <h1 className="text-2xl mt-3 font-semibold">{profileData.username || "Username"}</h1>
                     <figure className="img-box w-40 h-40 rounded-full ring-2 ring-blue-500">
                         <img src={profileData.avatar_url ? profileData.avatar_url : "./images/hand-drawn.avif"} alt="Profile Avatar" className="img-cover rounded-full" />
                     </figure>
-                    <div className="flex flex-col items-center">
-                        <h1 className="text-2xl">{profileData.username || "Username"}</h1>
-                        <h1 className="text-xl">Email: {profileData.email || "example@email.com"}</h1>
+                    <div className="flex flex-col items-center mt-2 gap-2">
+                        <h1 className="text-xl"> {profileData.full_name || "Fullname"}</h1>
+                        <h1 className="text-xl">Email : {profileData.email || "example@email.com"}</h1>
                     </div>
                     <div className="flex flex-col gap-2 max-w-xl text-center bg-zinc-800 rounded-xl p-4">
                         <h1 className="text-xl">Bio</h1>

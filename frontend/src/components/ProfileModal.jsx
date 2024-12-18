@@ -1,32 +1,13 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
-const ProfileModal = ({ setProfile }) => {
-    const { userId } = useContext(AuthContext);
-
-    const [fullName, setFullName] = useState("");
-    const [bio, setBio] = useState("");
+const ProfileModal = ({ setProfile, profileData }) => {
+    const { user, hasProfile } = useAuth();
+    const [fullName, setFullName] = useState(profileData?.full_name || "");
+    const [bio, setBio] = useState(profileData?.bio || "");
     const [avatar, setAvatar] = useState(null);
-    const [preview, setPreview] = useState(null);
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/profiles/edit/${userId}`);
-                const { full_name, bio, avatar_url } = response.data;
-                console.log(avatar_url)
-
-                setFullName(full_name || "");
-                setBio(bio || "");
-                setPreview(avatar_url ? avatar_url : null);
-            } catch (err) {
-                console.error("Error fetching profile:", err);
-            }
-        };
-
-        fetchProfile();
-    }, [userId]);
+    const [preview, setPreview] = useState(profileData?.avatar_url || null);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -45,12 +26,12 @@ const ProfileModal = ({ setProfile }) => {
         }
 
         const formData = new FormData();
-        formData.append("user_id", userId);
+        formData.append("user_id", user);
         formData.append("full_name", fullName);
         formData.append("bio", bio);
         if (avatar) {
-          formData.append("avatar", avatar);
-      }
+            formData.append("avatar", avatar);
+        }
 
         try {
             const response = await axios.post("http://localhost:8000/api/profiles/upload-profile", formData, {
@@ -108,11 +89,17 @@ const ProfileModal = ({ setProfile }) => {
                             </div>
                         </div>
 
-                        {/* ปุ่มอัปเดต */}
+                        {/* ถ้ามีโปรไฟล์แล้วให้แสดงปุ่มอัปเดต ถ้ายังไม่มี แสดงปุ่มสร้าง */}
                         <div className="flex p-4 justify-center">
-                            <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
-                                <h1 className="text-black font-medium">Update Profile</h1>
-                            </button>
+                            {hasProfile ? (
+                                <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
+                                    <h1 className="text-black font-bold">Update Profile</h1>
+                                </button>
+                            ) : (
+                                <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
+                                    <h1 className="text-black font-bold">Create Profile</h1>
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>

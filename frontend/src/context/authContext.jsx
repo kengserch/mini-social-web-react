@@ -11,6 +11,9 @@ const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
+    const [isProfileLoading, setIsProfileLoading] = useState(true);
+
+    const [hasProfile, setHasProfile] = useState(false);
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
@@ -36,19 +39,50 @@ const AuthProvider = ({ children }) => {
         } else {
             setIsLoading(false); // กรณีไม่มี token
         }
+
+       
+
+        
     }, []);
+
+    useEffect(() => {
+        const checkUserProfile = async () => {
+            if (isAuthenticated && user) {
+                setIsProfileLoading(true); // เริ่มโหลดโปรไฟล์
+                try {
+                    const response = await axios.get(`http://localhost:8000/api/profiles/${user}`);
+                    setHasProfile(!!response.data.profile); // ตรวจสอบโปรไฟล์
+                } catch (err) {
+                    console.error("Error checking profile:", err);
+                    setHasProfile(false);
+                } finally {
+                    setIsProfileLoading(false); // เสร็จสิ้นการโหลด
+                }
+            } else {
+                setHasProfile(false);
+            }
+        };
+
+        checkUserProfile();
+    }, [isAuthenticated, user]);
 
     const loginAction = async (inputs) => {
         try {
             const response = await axios.post("http://localhost:8000/api/users/login", inputs);
             if (response.data.status === "ok" && response.data.token) {
-                const token = response.data.token; // ดึง token จาก response.data
-                setToken(token); // ตั้งค่า token ใน state
-                const decoded = jwtDecode(token); // ถอดรหัส token
-                setUser(decoded.userId); // ตั้งค่า userId จาก token ที่ถอดรหัสแล้ว
-                localStorage.setItem("token", token); // เก็บ token ใน localStorage
-                setIsAuthenticated(true); // ตั้งค่าสถานะว่า authenticated
-                navigate("/");
+                const token = response.data.token;
+                setToken(token);
+                const decoded = jwtDecode(token);
+                setUser(decoded.userId);
+                localStorage.setItem("token", token);
+                setIsAuthenticated(true);
+
+                if (!hasProfile) {
+                    navigate("/profile");
+                } else {
+                    navigate("/");
+                }
+
                 console.log("Logged in successfully.");
             } else {
                 console.log("Login failed");
@@ -69,7 +103,23 @@ const AuthProvider = ({ children }) => {
         console.log("Logged out successfully.");
     };
 
-    return <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, token, user, loginAction, handleLogout, isLoading }}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                setIsAuthenticated,
+                token,
+                user,
+                hasProfile,
+                loginAction,
+                handleLogout,
+                isLoading,
+                isProfileLoading,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export default AuthProvider;

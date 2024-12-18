@@ -61,11 +61,11 @@ const Header = () => {
         <header className="fixed top-0 left-0 w-full h-20 flex items-center z-40 bg-zinc-950">
             <div className="max-w-screen-xl w-full mx-auto flex justify-between items-center">
                 <div>
-                    <a href="/">
+                    <Link to="/">
                         <figure className="w-24 h-auto flex items-center">
                             <img src="/images/webboard-logo.png" alt="Logo" />
                         </figure>
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex gap-2 mr-6">
                     {!isAuthenticated ? (
