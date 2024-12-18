@@ -1,39 +1,48 @@
 import React, { useState, useEffect, useContext } from "react";
 import ProfileModal from "../components/ProfileModal";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
 const Profile = () => {
-    const { isLoading, userId } = useContext(AuthContext);
+    const { user, isLoading: authLoading } = useAuth();
     const [isProfile, setProfile] = useState(false);
     const [profileData, setProfileData] = useState(null);
+    const [isFetching, setIsFetching] = useState(false); 
+
 
     const handleProfile = () => {
         setProfile(true);
     };
 
+
     useEffect(() => {
-        if (!userId) {
+        if (!user) {
+            setProfileData(null);
             return;
         }
 
         const fetchProfile = async () => {
+            setIsFetching(true);
             try {
-                const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+                const response = await axios.get(`http://localhost:8000/api/profiles/${user}`);
                 if (response.data.profile) {
                     setProfileData(response.data.profile);
                 } else {
                     console.error("Profile not found");
+                    setProfileData(null);
                 }
             } catch (err) {
                 console.error("Error fetching profile data:", err);
+                setProfileData(null);
+            }finally {
+                setIsFetching(false);
             }
         };
 
         fetchProfile();
-    }, [userId]); 
+    }, [user]); 
 
-    if (isLoading || !userId || !profileData) {
+    if (authLoading || isFetching) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <p className="text-lg text-gray-500">Loading profile...</p>

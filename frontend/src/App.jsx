@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "./context/authContext";
+import { useAuth } from "./context/authContext";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -10,9 +10,14 @@ import Profile from "./pages/Profile";
 import HomeLayout from "./layouts/HomeLayout";
 
 function App() {
-    const { isAuthenticated, isLoading } = useContext(AuthContext);
+    const { isAuthenticated, isLoading } = useAuth();
 
-    
+    // useEffect(() => {
+    //     console.log("App.jsx useEffect triggered");
+    //     console.log("isAuthenticated:", isAuthenticated);
+    //     console.log("isLoading:", isLoading);
+    // }, [isAuthenticated, isLoading]);
+
     if (isLoading) {
         return <div>Loading...</div>;
     }

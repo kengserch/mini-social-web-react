@@ -1,36 +1,24 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
-import { AuthContext } from "../context/authContext";
+
+import { useAuth } from "../context/authContext";
 import { useNavigate, Link } from "react-router";
 
 const Login = () => {
-    let navigate = useNavigate();
-
     const [inputs, setInputs] = useState({
         email: "",
         password: "",
     });
 
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const auth = useAuth();
 
     const handleChange = (e) => {
         setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const loginUser = async () => {
-        try {
-            const response = await axios.post("http://localhost:8000/api/users/login", inputs);
-            if (response.data.status === "ok") {
-                localStorage.setItem("token", response.data.token);
-                setIsAuthenticated(true);
-                location.href = "/"
-            } else {
-                //alert("Login failed: " + response.data.message);
-                console.log("Login failed");
-            }
-        } catch (error) {
-            console.error("Login error:", error);
-            alert("Login failed. Please check your credentials or try again later.");
+    const loginUser = () => {
+        if (inputs.username !== "" && inputs.password !== "") {
+            auth.loginAction(inputs);
+            return;
         }
     };
 
