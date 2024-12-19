@@ -4,10 +4,10 @@ import axios from "axios";
 import { useAuth } from "../context/authContext";
 
 const Header = () => {
-    const { isAuthenticated, handleLogout, user, isLoading: authLoading } = useAuth();
+    const { isAuthenticated, handleLogout, user, isLoading: authLoading, hasProfile } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const [profileData, setProfileData] = useState(null);
-    const [isFetching, setIsFetching] = useState(false); 
+    const [isFetching, setIsFetching] = useState(false);
 
     const navigate = useNavigate();
 
@@ -20,11 +20,8 @@ const Header = () => {
         navigate("/profile");
     };
 
-
-
     useEffect(() => {
-        if (!user) {
-            setProfileData(null);
+        if (!user || !hasProfile) {
             return;
         }
 
@@ -36,26 +33,23 @@ const Header = () => {
                     setProfileData(response.data.profile);
                 } else {
                     console.error("Profile not found");
-                    setProfileData(null);
                 }
             } catch (error) {
                 console.error("Error fetching profile data:", error);
-                setProfileData(null);
             } finally {
                 setIsFetching(false);
             }
         };
 
         fetchProfile();
-    }, [user]);
+    }, [user, hasProfile]);
 
-    if (authLoading || isFetching) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p className="text-lg text-gray-500">Loading...</p>
-            </div>
-        );
-    }
+    // if (authLoading || isFetching) {
+    //     return (
+    //         <div className="flex items-center justify-center h-screen">
+    //         </div>
+    //     );
+    // }
 
     return (
         <header className="fixed top-0 left-0 w-full h-20 flex items-center z-40 bg-zinc-950">
@@ -63,7 +57,7 @@ const Header = () => {
                 <div>
                     <Link to="/">
                         <figure className="w-24 h-auto flex items-center">
-                            <img src="/images/webboard-logo.png" alt="Logo" />
+                            <img src="/images/webboard-logo.png" width={80} alt="Logo" />
                         </figure>
                     </Link>
                 </div>
@@ -80,7 +74,7 @@ const Header = () => {
                                 <figure className="img-box w-10 h-10 rounded-full ring-2 ring-blue-500 relative">
                                     <img src={profileData?.avatar_url || "./images/hand-drawn.avif"} alt="Profile Avatar" className="img-cover" />
                                 </figure>
-                                <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData?.username || "Username"}</h1>
+                                <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData?.username || "Guest User"}</h1>
                             </div>
                             <div className={`w-44 h-auto bg-zinc-900 absolute rounded-lg inset-x-0 mt-2 origin-top transform transition-transform ease-in-out duration-75 ${showMenu ? "scale-y-100" : "scale-y-0"}`}>
                                 <div className="flex px-2 py-1 flex-col gap-1 cursor-pointer">

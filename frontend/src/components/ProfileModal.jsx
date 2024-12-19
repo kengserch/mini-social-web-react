@@ -34,7 +34,7 @@ const ProfileModal = ({ setProfile, profileData }) => {
         }
 
         try {
-            const response = await axios.post("http://localhost:8000/api/profiles/upload-profile", formData, {
+            const response = await axios.put("http://localhost:8000/api/profiles/update-profile", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -91,15 +91,9 @@ const ProfileModal = ({ setProfile, profileData }) => {
 
                         {/* ถ้ามีโปรไฟล์แล้วให้แสดงปุ่มอัปเดต ถ้ายังไม่มี แสดงปุ่มสร้าง */}
                         <div className="flex p-4 justify-center">
-                            {hasProfile ? (
-                                <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
-                                    <h1 className="text-black font-bold">Update Profile</h1>
-                                </button>
-                            ) : (
-                                <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
-                                    <h1 className="text-black font-bold">Create Profile</h1>
-                                </button>
-                            )}
+                            <button type="submit" className="py-2 w-full bg-lime-300 rounded-3xl">
+                                <h1 className="text-black font-bold">Update Profile</h1>
+                            </button>
                         </div>
                     </form>
                 </div>

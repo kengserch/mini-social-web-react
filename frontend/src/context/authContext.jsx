@@ -11,8 +11,7 @@ const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const [isProfileLoading, setIsProfileLoading] = useState(true);
-
+    const [isProfileLoading, setIsProfileLoading] = useState(false);
     const [hasProfile, setHasProfile] = useState(false);
 
     useEffect(() => {
@@ -26,6 +25,7 @@ const AuthProvider = ({ children }) => {
                 if (decoded.exp && decoded.exp > currentTime) {
                     setUser(decoded.userId);
                     setIsAuthenticated(true);
+                    checkUserProfile(decoded.userId);
                 } else {
                     console.log("Token expired!");
                     handleLogout();
@@ -39,32 +39,22 @@ const AuthProvider = ({ children }) => {
         } else {
             setIsLoading(false); // กรณีไม่มี token
         }
-
-       
-
-        
     }, []);
 
-    useEffect(() => {
-        const checkUserProfile = async () => {
-            if (isAuthenticated && user) {
-                setIsProfileLoading(true); // เริ่มโหลดโปรไฟล์
-                try {
-                    const response = await axios.get(`http://localhost:8000/api/profiles/${user}`);
-                    setHasProfile(!!response.data.profile); // ตรวจสอบโปรไฟล์
-                } catch (err) {
-                    console.error("Error checking profile:", err);
-                    setHasProfile(false);
-                } finally {
-                    setIsProfileLoading(false); // เสร็จสิ้นการโหลด
-                }
-            } else {
-                setHasProfile(false);
-            }
-        };
+    const checkUserProfile = async (userId) => {
+        setIsProfileLoading(true);
+        try {
+            const response = await axios.get(`http://localhost:8000/api/profiles/check/${userId}`);
+            setHasProfile(!!response.data.hasProfile);
+        } catch (err) {
+            console.error("Error checking profile:", err);
+            setHasProfile(false);
+        } finally {
+            setIsProfileLoading(false);
+        }
+    };
 
-        checkUserProfile();
-    }, [isAuthenticated, user]);
+    
 
     const loginAction = async (inputs) => {
         try {
@@ -76,6 +66,9 @@ const AuthProvider = ({ children }) => {
                 setUser(decoded.userId);
                 localStorage.setItem("token", token);
                 setIsAuthenticated(true);
+
+               
+                await checkUserProfile(decoded.userId);
 
                 if (!hasProfile) {
                     navigate("/profile");
@@ -99,6 +92,7 @@ const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         setUser(null);
         setToken("");
+        setHasProfile(false);
         navigate("/");
         console.log("Logged out successfully.");
     };
@@ -107,7 +101,6 @@ const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 isAuthenticated,
-                setIsAuthenticated,
                 token,
                 user,
                 hasProfile,

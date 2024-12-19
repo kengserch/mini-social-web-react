@@ -2,10 +2,10 @@ import React from "react";
 
 const PostCard = () => {
     return (
-        <div className="w-full h-auto p-6 rounded-lg mt-4 bg-zinc-800">
+        <div className="w-full h-auto p-6 rounded-lg mt-4 bg-zinc-800 min-h-[300px]">
             <div className="flex gap-4">
                 <figure className="img-box w-16 h-16 rounded-full">
-                    <img src="./images/hand-drawn.avif" className="img-cover" />
+                    <img src="./images/hand-drawn.avif" width={64} height={64} className="img-cover" alt="Avatar" />
                 </figure>
                 <div>
                     <h1 className="text-lg font-normal">Author Post Name</h1>
@@ -30,7 +30,7 @@ const PostCard = () => {
                 </div>
                 <div className="flex justify-end">
                     <figure className="img-box w-60 h-40 rounded-xl">
-                        <img src="./images/hand-drawn.avif" className="img-cover" />
+                        <img src="./images/hand-drawn.avif" width={240} height={160} className="img-cover" alt="Post Image" />
                     </figure>
                 </div>
             </div>

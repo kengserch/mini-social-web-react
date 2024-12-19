@@ -2,36 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-  @apply bg-zinc-950/95 text-zinc-50;
+:root {
+    --header-height: 100px; /* กำหนดขนาดของ header */
+}
+
+body {
+    @apply bg-zinc-950/95 text-zinc-50;
+}
+
+.container {
+    @apply px-4 mx-auto ;
+    padding-top: var(--header-height);
 }
 
 .img-box {
-  @apply bg-zinc-700 overflow-hidden;
+    @apply bg-zinc-700 overflow-hidden;
 }
 .img-cover {
-  @apply w-full h-full object-cover;
+    @apply w-full h-full object-cover;
 }
 
 .img-profile {
-  @apply w-full h-full object-cover;
+    @apply w-full h-full object-cover;
 }
 
 .wrapper-model {
-  @apply  bg-black/40 fixed inset-0 flex justify-center items-center z-0
+    @apply bg-black/40 fixed inset-0 flex justify-center items-center z-0;
 }
-.modal{
-  @apply  w-96 h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
+.modal {
+    @apply w-96 h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col;
 }
 
 .wrapper-form {
-  @apply fixed inset-0 flex justify-center items-center z-0
+    @apply fixed inset-0 flex justify-center items-center z-0;
 }
-.form{
-  @apply  w-[25rem] h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
-}
-
-.post-modal{
-  @apply  w-[500px] h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col
+.form {
+    @apply w-[25rem] h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col;
 }
 
+.post-modal {
+    @apply w-[500px] h-auto p-4 bg-zinc-800 rounded-xl z-10 flex flex-col;
+}

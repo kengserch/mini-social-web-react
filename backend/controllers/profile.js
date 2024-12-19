@@ -34,7 +34,7 @@ const upload = multer({
     },
 });
 
-export const updateProfile = [
+export const createProfile = [
     upload.single("avatar"), // Middleware สำหรับอัปโหลดรูป
     asyncHandler(async (req, res) => {
         const { user_id, full_name, bio } = req.body;
@@ -44,35 +44,39 @@ export const updateProfile = [
             avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
         }
 
-        // ตรวจสอบว่ามีโปรไฟล์ของ user_id นี้อยู่ในฐานข้อมูลหรือไม่
-        const existingProfile = await db.query("SELECT * FROM profile WHERE user_id = $1", [user_id]);
+        const query = `
+              INSERT INTO profile (user_id, full_name, avatar_url, bio) VALUES ($1, $2, $3, $4) RETURNING *;
+              `;
+        const result = await db.query(query, [user_id, full_name, avatarUrl, bio]);
 
-        if (existingProfile.rows.length > 0) {
-            // ถ้ามีอยู่แล้ว ให้ทำการอัปเดต
-            const query = `UPDATE profile SET 
+        return res.status(201).json({
+            message: "Profile created successfully!",
+            profile: result.rows[0],
+        });
+    }),
+];
+
+export const updateProfile = [
+    upload.single("avatar"), // Middleware สำหรับอัปโหลดรูป
+    asyncHandler(async (req, res) => {
+        const { user_id, full_name, bio } = req.body;
+
+        let avatarUrl = null;
+        if (req.file) {
+            avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        }
+        const query = `UPDATE profile SET 
                             full_name = $1, 
                             bio = $2, 
                             avatar_url = COALESCE($3, avatar_url), 
                             created_at = NOW() 
                             WHERE user_id = $4 RETURNING *; `;
-            const result = await db.query(query, [full_name, bio, avatarUrl, user_id]);
+        const result = await db.query(query, [full_name, bio, avatarUrl, user_id]);
 
-            return res.status(200).json({
-                message: "Profile updated successfully!",
-                profile: result.rows[0],
-            });
-        } else {
-            // ถ้ายังไม่มีโปรไฟล์ ให้สร้างใหม่
-            const query = `
-              INSERT INTO profile (user_id, full_name, avatar_url, bio) VALUES ($1, $2, $3, $4) RETURNING *;
-              `;
-            const result = await db.query(query, [user_id, full_name, avatarUrl, bio]);
-
-            return res.status(201).json({
-                message: "Profile created successfully!",
-                profile: result.rows[0],
-            });
-        }
+        return res.status(200).json({
+            message: "Profile updated successfully!",
+            profile: result.rows[0],
+        });
     }),
 ];
 
@@ -92,34 +96,30 @@ export const getProfile = asyncHandler(async (req, res) => {
     res.json({ profile: result.rows[0] });
 });
 
-
 export const getEditProfile = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+    const { userId } = req.params;
 
-  const result = await db.query(
-      `
+    const result = await db.query(
+        `
       SELECT full_name, bio, avatar_url
       FROM profile
       WHERE user_id = $1
       `,
-      [userId]
-  );
+        [userId]
+    );
 
-  if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Profile not found" });
-  }
+    if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Profile not found" });
+    }
 
-  res.status(200).json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
 });
 
-export const checkProfile = asyncHandler(async (req,res) => {
+export const checkProfile = asyncHandler(async (req, res) => {
     const { userId } = req.params;
 
     try {
-        const result = await db.query(
-            "SELECT * FROM profile WHERE user_id = $1",
-            [userId]
-        );
+        const result = await db.query("SELECT * FROM profile WHERE user_id = $1", [userId]);
 
         if (result.rows.length > 0) {
             res.status(200).json({ hasProfile: true });
@@ -130,5 +130,4 @@ export const checkProfile = asyncHandler(async (req,res) => {
         console.error("Error checking profile:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-
-})
+});
