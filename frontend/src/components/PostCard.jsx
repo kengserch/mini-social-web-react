@@ -5,7 +5,7 @@ const PostCard = () => {
         <div className="w-full h-auto p-6 rounded-lg mt-4 bg-zinc-800 min-h-[300px]">
             <div className="flex gap-4">
                 <figure className="img-box w-16 h-16 rounded-full">
-                    <img src="./images/hand-drawn.avif" width={64} height={64} className="img-cover" alt="Avatar" />
+                    <img src="./images/hand-drawn.avif" width={64} height={64} alt="Avatar" />
                 </figure>
                 <div>
                     <h1 className="text-lg font-normal">Author Post Name</h1>
@@ -30,7 +30,7 @@ const PostCard = () => {
                 </div>
                 <div className="flex justify-end">
                     <figure className="img-box w-60 h-40 rounded-xl">
-                        <img src="./images/hand-drawn.avif" width={240} height={160} className="img-cover" alt="Post Image" />
+                        <img src="https://images.unsplash.com/photo-1554629947-334ff61d85dc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&h=1280&q=80" className="object-cover w-60 h-40" width="240" height="160" alt="Post Image" loading="lazy" />
                     </figure>
                 </div>
             </div>

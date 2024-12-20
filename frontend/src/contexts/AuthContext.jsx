@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
                 if (decoded.exp && decoded.exp > currentTime) {
                     setUser(decoded.userId);
                     setIsAuthenticated(true);
-                    checkUserProfile(decoded.userId);
+                    fetchProfile(decoded.userId);
                 } else {
                     console.log("Token expired!");
                     handleLogout();
@@ -54,8 +54,7 @@ const AuthProvider = ({ children }) => {
                 localStorage.setItem("token", token);
                 setIsAuthenticated(true);
 
-               
-                await checkUserProfile(decoded.userId);
+                await fetchProfile(decoded.userId);
 
                 if (!hasProfile) {
                     navigate("/profile");
@@ -84,19 +83,6 @@ const AuthProvider = ({ children }) => {
         console.log("Logged out successfully.");
     };
 
-    const checkUserProfile = async (userId) => {
-        setIsProfileLoading(true);
-        try {
-            const response = await axios.get(`http://localhost:8000/api/profiles/check/${userId}`);
-            setHasProfile(!!response.data.hasProfile);
-        } catch (err) {
-            console.error("Error checking profile:", err);
-            setHasProfile(false);
-        } finally {
-            setIsProfileLoading(false);
-        }
-    };
-
     const fetchProfile = async (userId) => {
         setIsProfileLoading(true);
         try {
@@ -105,7 +91,6 @@ const AuthProvider = ({ children }) => {
                 setProfileData(response.data.profile);
                 setHasProfile(true);
             } else {
-                console.error("Profile not found");
                 setProfileData(null);
                 setHasProfile(false);
             }

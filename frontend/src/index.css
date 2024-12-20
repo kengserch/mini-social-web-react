@@ -18,13 +18,6 @@ body {
 .img-box {
     @apply bg-zinc-700 overflow-hidden;
 }
-.img-cover {
-    @apply w-full h-full object-cover;
-}
-
-.img-profile {
-    @apply w-full h-full object-cover;
-}
 
 .wrapper-model {
     @apply bg-black/40 fixed inset-0 flex justify-center items-center z-0;
