@@ -3,7 +3,7 @@ import Filter from "../components/Filter";
 import Hasetag from "../components/Hasetag";
 import PostCard from "../components/PostCard";
 import CreatePostModal from "../components/CreatePostModal";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
 const Home = () => {

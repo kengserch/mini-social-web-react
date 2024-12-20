@@ -6,13 +6,15 @@ import axios from "axios";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    const navigate = useNavigate();
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("token") || "");
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [isProfileLoading, setIsProfileLoading] = useState(false);
     const [hasProfile, setHasProfile] = useState(false);
+    const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
@@ -40,21 +42,6 @@ const AuthProvider = ({ children }) => {
             setIsLoading(false); // กรณีไม่มี token
         }
     }, []);
-
-    const checkUserProfile = async (userId) => {
-        setIsProfileLoading(true);
-        try {
-            const response = await axios.get(`http://localhost:8000/api/profiles/check/${userId}`);
-            setHasProfile(!!response.data.hasProfile);
-        } catch (err) {
-            console.error("Error checking profile:", err);
-            setHasProfile(false);
-        } finally {
-            setIsProfileLoading(false);
-        }
-    };
-
-    
 
     const loginAction = async (inputs) => {
         try {
@@ -97,15 +84,58 @@ const AuthProvider = ({ children }) => {
         console.log("Logged out successfully.");
     };
 
+    const checkUserProfile = async (userId) => {
+        setIsProfileLoading(true);
+        try {
+            const response = await axios.get(`http://localhost:8000/api/profiles/check/${userId}`);
+            setHasProfile(!!response.data.hasProfile);
+        } catch (err) {
+            console.error("Error checking profile:", err);
+            setHasProfile(false);
+        } finally {
+            setIsProfileLoading(false);
+        }
+    };
+
+    const fetchProfile = async (userId) => {
+        setIsProfileLoading(true);
+        try {
+            const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+            if (response.data.profile) {
+                setProfileData(response.data.profile);
+                setHasProfile(true);
+            } else {
+                console.error("Profile not found");
+                setProfileData(null);
+                setHasProfile(false);
+            }
+        } catch (error) {
+            console.error("Error fetching profile data:", error);
+            setProfileData(null);
+            setHasProfile(false);
+        } finally {
+            setIsProfileLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user && isAuthenticated) {
+            fetchProfile(user);
+        } else {
+            setProfileData(null);
+        }
+    }, [user, isAuthenticated]);
+
     return (
         <AuthContext.Provider
             value={{
-                isAuthenticated,
                 token,
                 user,
-                hasProfile,
+                isAuthenticated,
                 loginAction,
                 handleLogout,
+                hasProfile,
+                profileData,
                 isLoading,
                 isProfileLoading,
             }}

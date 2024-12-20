@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router";
-import { useAuth } from "./context/authContext";
+import { useAuth } from "./contexts/AuthContext";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import CreateProfile from "./components/CreateProfile";
+import CreateProfile from "./pages/CreateProfile";
 
 import HomeLayout from "./layouts/HomeLayout";
 

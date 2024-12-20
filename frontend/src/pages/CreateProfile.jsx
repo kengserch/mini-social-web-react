@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
 const CreateProfile = () => {
@@ -42,7 +42,7 @@ const CreateProfile = () => {
 
             alert("Profile create successfully!");
             console.log(response.data);
-            window.location = "/"
+            window.location = "/";
         } catch (err) {
             console.error(err);
             alert("Error crated profile.");

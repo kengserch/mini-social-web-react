@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const ProfileModal = ({ setProfile, profileData }) => {
-    const { user, hasProfile } = useAuth();
+    const { user } = useAuth();
     const [fullName, setFullName] = useState(profileData?.full_name || "");
     const [bio, setBio] = useState(profileData?.bio || "");
     const [avatar, setAvatar] = useState(null);

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import axios from "axios";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const Header = () => {
-    const { isAuthenticated, handleLogout, user, isLoading: authLoading, hasProfile } = useAuth();
+    const { isAuthenticated, handleLogout, user, isLoading: authLoading, hasProfile, profileData } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
-    const [profileData, setProfileData] = useState(null);
-    const [isFetching, setIsFetching] = useState(false);
 
     const navigate = useNavigate();
 
@@ -24,24 +21,6 @@ const Header = () => {
         if (!user || !hasProfile) {
             return;
         }
-
-        const fetchProfile = async () => {
-            setIsFetching(true);
-            try {
-                const response = await axios.get(`http://localhost:8000/api/profiles/${user}`);
-                if (response.data.profile) {
-                    setProfileData(response.data.profile);
-                } else {
-                    console.error("Profile not found");
-                }
-            } catch (error) {
-                console.error("Error fetching profile data:", error);
-            } finally {
-                setIsFetching(false);
-            }
-        };
-
-        fetchProfile();
     }, [user, hasProfile]);
 
     // if (authLoading || isFetching) {
