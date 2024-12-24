@@ -13,27 +13,23 @@ import HomeLayout from "./layouts/HomeLayout";
 function App() {
     const { isAuthenticated, isLoading, hasProfile, isProfileLoading } = useAuth();
 
-    // useEffect(() => {
-    //     console.log("----App.jsx useEffect triggered----");
-    //     console.log("isAuthenticated:", isAuthenticated);
-    //     console.log("hasProfile:", hasProfile);
-    // }, [isAuthenticated, hasProfile]);
+    useEffect(() => {
+        console.log("----App.jsx useEffect triggered----");
+        console.log("isAuthenticated:", isAuthenticated);
+        console.log("hasProfile:", hasProfile);
+    }, [isAuthenticated, hasProfile]);
 
     if (isLoading || isProfileLoading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-               
-            </div>
-        );
+        return <div className="flex items-center justify-center h-screen"></div>;
     }
 
     return (
         <Routes>
             {/* หน้า Home */}
             <Route element={<HomeLayout />}>
-                <Route index element={isAuthenticated ? hasProfile ? <Home /> : <Navigate to="/create-profile" /> : <Navigate to="/login" />} />
+                <Route path="/" element={<Home />} />
                 <Route path="profile" element={isAuthenticated ? hasProfile ? <Profile /> : <Navigate to="/create-profile" /> : <Navigate to="/login" />} />
-                <Route path="create-profile" element={isAuthenticated ? !hasProfile ? <CreateProfile /> : <Navigate to="/" /> : <Navigate to="/login" />} />
+                <Route path="create-profile" element={isAuthenticated ? hasProfile ? <Navigate to="/" /> : <CreateProfile /> : <Navigate to="/login" />} />
             </Route>
 
             {/* หน้า Login/Register */}

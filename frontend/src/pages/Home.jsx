@@ -8,14 +8,17 @@ import { useNavigate } from "react-router";
 
 const Home = () => {
     let navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, hasProfile } = useAuth();
     const [isCreatedPostOpen, setCreatePost] = useState(false);
 
     const handleCreatePostClick = () => {
-        if (isAuthenticated) {
+        if (isAuthenticated && hasProfile) {
             setCreatePost(true);
+        } else if (isAuthenticated && !hasProfile) {
+            alert("Please Create Profile first!");
+            navigate("/create-profile");
         } else {
-            alert("Please log in to create a post.");
+            alert("Please log in to create a post!");
             navigate("/login");
         }
     };
@@ -36,7 +39,6 @@ const Home = () => {
                 <Hasetag />
             </div>
         </div>
-      
     );
 };
 

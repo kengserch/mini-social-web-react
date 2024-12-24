@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router";
+import { redirect, useNavigate } from "react-router";
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -55,13 +55,11 @@ const AuthProvider = ({ children }) => {
                 setIsAuthenticated(true);
 
                 await fetchProfile(decoded.userId);
-
-                if (!hasProfile) {
-                    navigate("/profile");
-                } else {
+                if (hasProfile) {
                     navigate("/");
+                } else {
+                    navigate("/create-profile");
                 }
-
                 console.log("Logged in successfully.");
             } else {
                 console.log("Login failed");
@@ -110,6 +108,10 @@ const AuthProvider = ({ children }) => {
             setProfileData(null);
         }
     }, [user, isAuthenticated]);
+
+    
+
+    
 
     return (
         <AuthContext.Provider
