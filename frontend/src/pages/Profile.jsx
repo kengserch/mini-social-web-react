@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from "react";
 import ProfileModal from "../components/UpdateProfileModal";
 import { useAuth } from "../contexts/AuthContext";
+import { useParams } from "react-router";
 
 const Profile = () => {
-    const { user, isLoading: authLoading, hasProfile, profileData } = useAuth();
+    const { id } = useParams()
+
+    const { user, isLoading: authLoading, fetchProfileById } = useAuth();
     const [isProfile, setProfile] = useState(false);
+    const [profileData, setProfileData] = useState(null);
+
+    const isOwner = id === String(user);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const profile = await fetchProfileById(id);
+            setProfileData(profile);
+        };
+        fetchData();
+    }, [id]);
 
     // ฟังก์ชันเปิด Modal
     const handleProfile = () => {
@@ -12,10 +26,10 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        if (!user || !hasProfile) {
+        if (!user) {
             return;
         }
-    }, [user, hasProfile]);
+    }, [user]);
 
     //แสดงหน้าจอ Loading
     if (authLoading || !profileData) {
@@ -24,12 +38,16 @@ const Profile = () => {
 
     return (
         <div className="container">
+           
             <div className="flex justify-end pt-3">
+            {isOwner && (
                 <button className="px-4 py-1  bg-lime-300 rounded-3xl" onClick={handleProfile}>
                     <h1 className="text-black font-bold">Edit Profile</h1>
                 </button>
+                )}
                 {isProfile && <ProfileModal setProfile={setProfile} profileData={profileData} />}
             </div>
+            
 
             <div className="flex flex-col items-center gap-4">
                 <h1 className="text-2xl mt-3 font-semibold">{profileData.username || "Username"}</h1>

@@ -1,7 +1,7 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { jwtDecode } from "jwt-decode";
-import { redirect, useNavigate } from "react-router";
-import axios from "axios";
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -10,14 +10,14 @@ const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem("token") || "");
+    const [token, setToken] = useState(localStorage.getItem('token') || '');
     const [isLoading, setIsLoading] = useState(true);
     const [isProfileLoading, setIsProfileLoading] = useState(false);
     const [hasProfile, setHasProfile] = useState(false);
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
+        const storedToken = localStorage.getItem('token');
 
         if (storedToken) {
             try {
@@ -29,56 +29,56 @@ const AuthProvider = ({ children }) => {
                     setIsAuthenticated(true);
                     fetchProfile(decoded.userId);
                 } else {
-                    console.log("Token expired!");
+                    console.log('Token expired!');
                     handleLogout();
                 }
             } catch (error) {
-                console.error("Invalid token:", error); // เพิ่ม log
+                console.error('Invalid token:', error);
                 handleLogout();
             } finally {
-                setIsLoading(false); // การโหลดเสร็จในทุกกรณี
+                setIsLoading(false);
             }
         } else {
-            setIsLoading(false); // กรณีไม่มี token
+            setIsLoading(false);
         }
     }, []);
 
     const loginAction = async (inputs) => {
         try {
-            const response = await axios.post("http://localhost:8000/api/users/login", inputs);
-            if (response.data.status === "ok" && response.data.token) {
+            const response = await axios.post('http://localhost:8000/api/users/login', inputs);
+            if (response.data.status === 'ok' && response.data.token) {
                 const token = response.data.token;
                 setToken(token);
                 const decoded = jwtDecode(token);
                 setUser(decoded.userId);
-                localStorage.setItem("token", token);
+                localStorage.setItem('token', token);
                 setIsAuthenticated(true);
 
                 await fetchProfile(decoded.userId);
                 if (hasProfile) {
-                    navigate("/");
+                    navigate('/');
                 } else {
-                    navigate("/create-profile");
+                    navigate('/create-profile');
                 }
-                console.log("Logged in successfully.");
+                console.log('Logged in successfully.');
             } else {
-                console.log("Login failed");
-                alert("Login failed. Please check your credentials.");
+                console.log('Login failed');
+                alert('Login failed. Please check your credentials.');
             }
         } catch (error) {
-            console.error("Login error:", error);
-            alert("Login failed. Please check your credentials or try again later.");
+            console.error('Login error:', error);
+            alert('Login failed. Please check your credentials or try again later.');
         }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         setIsAuthenticated(false);
         setUser(null);
-        setToken("");
+        setToken('');
         setHasProfile(false);
-        navigate("/");
-        console.log("Logged out successfully.");
+        navigate('/');
+        console.log('Logged out successfully.');
     };
 
     const fetchProfile = async (userId) => {
@@ -93,7 +93,7 @@ const AuthProvider = ({ children }) => {
                 setHasProfile(false);
             }
         } catch (error) {
-            console.error("Error fetching profile data:", error);
+            console.error('Error fetching profile data:', error);
             setProfileData(null);
             setHasProfile(false);
         } finally {
@@ -101,17 +101,27 @@ const AuthProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        if (user && isAuthenticated) {
-            fetchProfile(user);
-        } else {
-            setProfileData(null);
+    const fetchProfileById = async (userId) => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+            if (response.data.profile) {
+                return response.data.profile;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching profile by ID:", error);
+            return null;
         }
-    }, [user, isAuthenticated]);
+    };
 
-    
-
-    
+    // useEffect(() => {
+    //     if (user && isAuthenticated) {
+    //         fetchProfile(user);
+    //     } else {
+    //         setProfileData(null);
+    //     }
+    // }, [user, isAuthenticated]);
 
     return (
         <AuthContext.Provider
@@ -125,6 +135,7 @@ const AuthProvider = ({ children }) => {
                 profileData,
                 isLoading,
                 isProfileLoading,
+                fetchProfileById
             }}
         >
             {children}

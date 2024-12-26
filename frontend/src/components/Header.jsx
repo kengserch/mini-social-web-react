@@ -14,7 +14,7 @@ const Header = () => {
 
     const handleProfileClick = () => {
         setShowMenu(false);
-        navigate("/profile");
+        navigate(`/profile/${user}`); // ใช้ user ID จาก Context
     };
 
     useEffect(() => {
