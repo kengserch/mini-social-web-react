@@ -11,12 +11,13 @@ import CreateProfile from './pages/CreateProfile';
 import HomeLayout from './layouts/HomeLayout';
 
 function App() {
-    const { isAuthenticated, isLoading, hasProfile, isProfileLoading } = useAuth();
+    const { isAuthenticated, isLoading, hasProfile, isProfileLoading, profileData } = useAuth();
 
     // useEffect(() => {
     //     console.log("----App.jsx useEffect triggered----");
     //     console.log("isAuthenticated:", isAuthenticated);
     //     console.log("hasProfile:", hasProfile);
+    //     console.log("profileData:", profileData)
     // }, [isAuthenticated, hasProfile]);
 
     if (isLoading || isProfileLoading) {

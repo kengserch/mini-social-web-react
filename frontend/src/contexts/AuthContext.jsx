@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
+import AxiosInstance from '../utils/AxiosInstance';
 
 export const AuthContext = createContext();
 
@@ -16,22 +17,38 @@ const AuthProvider = ({ children }) => {
     const [hasProfile, setHasProfile] = useState(false);
     const [profileData, setProfileData] = useState(null);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        setUser(null);
+        setToken('');
+        setHasProfile(false);
+        console.log('Logged out successfully.');
+    };
+
+    const setTokenExpiryTimer = (expiryTime) => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const timeLeft = expiryTime - currentTime;
+
+        if (timeLeft > 0) {
+            setTimeout(() => {
+                alert('Token expired, logging out');
+                console.log('Token expired, logging out.');
+                handleLogout();
+            }, timeLeft * 1000); // แปลงวินาทีเป็นมิลลิวินาที
+        } else {
+            handleLogout();
+        }
+    };
+
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-
-        if (storedToken) {
+        if (token) {
             try {
-                const decoded = jwtDecode(storedToken);
-                const currentTime = Math.floor(Date.now() / 1000);
-
-                if (decoded.exp && decoded.exp > currentTime) {
-                    setUser(decoded.userId);
-                    setIsAuthenticated(true);
-                    fetchProfile(decoded.userId);
-                } else {
-                    console.log('Token expired!');
-                    handleLogout();
-                }
+                const decoded = jwtDecode(token);
+                setUser(decoded.userId);
+                setIsAuthenticated(true);
+                fetchProfile(decoded.userId);
+                setTokenExpiryTimer(decoded.exp);
             } catch (error) {
                 console.error('Invalid token:', error);
                 handleLogout();
@@ -41,7 +58,9 @@ const AuthProvider = ({ children }) => {
         } else {
             setIsLoading(false);
         }
-    }, []);
+    }, [token]);
+
+    
 
     const loginAction = async (inputs) => {
         try {
@@ -71,20 +90,12 @@ const AuthProvider = ({ children }) => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setUser(null);
-        setToken('');
-        setHasProfile(false);
-        navigate('/');
-        console.log('Logged out successfully.');
-    };
-
     const fetchProfile = async (userId) => {
         setIsProfileLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+            const response = await AxiosInstance.get(`/api/profiles/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             if (response.data.profile) {
                 setProfileData(response.data.profile);
                 setHasProfile(true);
@@ -94,6 +105,7 @@ const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error fetching profile data:', error);
+            //console.error(error.response.data.message);
             setProfileData(null);
             setHasProfile(false);
         } finally {
@@ -103,25 +115,33 @@ const AuthProvider = ({ children }) => {
 
     const fetchProfileById = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/profiles/${userId}`);
+            const response = await AxiosInstance.get(`/api/profiles/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             if (response.data.profile) {
                 return response.data.profile;
             } else {
                 return null;
             }
         } catch (error) {
-            console.error("Error fetching profile by ID:", error);
+            console.error('Error fetching profile by ID:', error);
             return null;
         }
     };
 
     // useEffect(() => {
-    //     if (user && isAuthenticated) {
-    //         fetchProfile(user);
-    //     } else {
-    //         setProfileData(null);
-    //     }
-    // }, [user, isAuthenticated]);
+    //     AxiosInstance.interceptors.response.use(
+    //         (response) => response,
+    //         (error) => {
+    //             if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    //                 console.log('Token expired or unauthorized, logging out.');
+    //                 handleLogout(); // Logout ผู้ใช้งาน
+    //                 alert('Session expired. Please log in again.');
+    //             }
+    //             return Promise.reject(error);
+    //         }
+    //     );
+    // }, []);
 
     return (
         <AuthContext.Provider
@@ -135,7 +155,7 @@ const AuthProvider = ({ children }) => {
                 profileData,
                 isLoading,
                 isProfileLoading,
-                fetchProfileById
+                fetchProfileById,
             }}
         >
             {children}
