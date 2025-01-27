@@ -6,7 +6,7 @@ import asyncHandler from 'express-async-handler';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = 'uploads/';
+        const uploadPath = 'uploads/profile';
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
@@ -41,7 +41,7 @@ export const createProfile = [
 
         let avatarUrl = null;
         if (req.file) {
-            avatarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            avatarUrl = `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}`;
         }
 
         const query = `
@@ -63,7 +63,7 @@ export const updateProfile = [
 
         let avatarUrl = null;
         if (req.file) {
-            avatarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            avatarUrl = `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}`;
         }
         const query = `UPDATE profile SET 
                             full_name = $1, 

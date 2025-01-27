@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 
 const Home = () => {
     let navigate = useNavigate();
-    const { isAuthenticated, hasProfile } = useAuth();
+    const { isAuthenticated, hasProfile, user } = useAuth();
     const [isCreatedPostOpen, setCreatePost] = useState(false);
 
     const handleCreatePostClick = () => {
@@ -32,7 +32,7 @@ const Home = () => {
                         <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={handleCreatePostClick}>
                             <h1 className="text-black font-bold">Create post</h1>
                         </button>
-                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} />}
+                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} />}
                     </div>
                     <PostCard />
                 </div>

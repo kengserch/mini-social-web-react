@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const PostCard = () => {
     return (
@@ -12,26 +12,18 @@ const PostCard = () => {
                     <h1>2 days ago</h1>
                 </div>
             </div>
-            <div className="mt-4 grid py-6 grid-cols-2 border-b-2 border-zinc-400/20">
-                <div className="flex flex-col justify-between">
+            <div className="mt-4 grid grid-flow-row py-6 gap-4 border-b-2 border-zinc-400/20">
+                <div className="flex flex-col gap-5">
                     <h1 className="text-xl font-normal">Lorem ipsum dolor sit amet.</h1>
-                    <div>
-                        <div className="flex gap-3">
-                            <h1>#hasetag</h1>
-                            <h1>#hasetag</h1>
-                            <h1>#hasetag</h1>
-                        </div>
-                        <div className="flex gap-3 mt-3">
-                            <button className="px-4 border-2 border-amber-600  rounded-3xl">
-                                <h1 className="text-white font-medium">Tags</h1>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex justify-end">
-                    <figure className="img-box w-60 h-40 rounded-xl">
-                        <img src="https://images.unsplash.com/photo-1554629947-334ff61d85dc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&h=1280&q=80" className="object-cover w-60 h-40" width="240" height="160" alt="Post Image" loading="lazy" />
+                    <figure className="img-box w-full h-96 rounded-xl">
+                        <img className="w-full h-full object-cover object-center" src="https://images.unsplash.com/photo-1554629947-334ff61d85dc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&h=1280&q=80" alt="Post Image" loading="lazy" />
                     </figure>
+                </div>
+
+                <div>
+                    <button className="px-4 border-2 border-amber-600  rounded-3xl">
+                        <h1 className="text-white font-medium">Tags</h1>
+                    </button>
                 </div>
             </div>
             <div className="flex justify-between mt-4">

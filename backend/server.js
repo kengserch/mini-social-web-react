@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { userRoutes } from './routes/user.js';
 import { profileRoutes } from './routes/profile.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { postRoutes } from './routes/post.js';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/profiles', profileRoutes);
+app.use('/api/posts', postRoutes);
+
 
 app.use('/uploads', express.static('uploads'));
 
