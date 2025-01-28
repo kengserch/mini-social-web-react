@@ -4,7 +4,6 @@ import path from 'path';
 import { db } from '../db.js';
 import asyncHandler from 'express-async-handler';
 
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadPath = 'uploads/post';
@@ -42,7 +41,7 @@ export const createPost = [
 
         let postUrl = null;
         if (req.file) {
-          postUrl = `${req.protocol}://${req.get('host')}/uploads/post/${req.file.filename}`;
+            postUrl = `${req.protocol}://${req.get('host')}/uploads/post/${req.file.filename}`;
         }
 
         const query = `
@@ -56,3 +55,14 @@ export const createPost = [
         });
     }),
 ];
+
+export const getPost = asyncHandler(async (req, res) => {
+    const result = await db.query(
+        `SELECT post.title, post.post_url, post.created_at, profile.full_name, profile.avatar_url, post_category.category_name
+         FROM post
+         INNER JOIN profile ON post.user_id = profile.user_id
+         INNER JOIN post_category ON post.category_id = post_category.category_id   
+         `
+    );
+    res.status(200).json({ posts: result.rows });
+});
