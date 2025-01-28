@@ -1,11 +1,12 @@
 import React from 'react';
 
-const PostCard = ({ postData }) => {
+const PostCard = ({ postData , handleLikePost }) => {
     return (
-        <div className="w-full h-auto p-6 rounded-lg mt-4 bg-zinc-800 min-h-[300px]">
+        <div>
             {postData.length > 0 ? (
-                postData.map((post, index) => (
-                    <div key={index} className="mb-8">
+                postData.map((post) => (
+                    <div key={post.post_id} className="w-full h-auto p-6 rounded-lg mt-6 bg-zinc-800 min-h-[300px]">
+                    <div className="mb-8">
                         <div className="flex gap-4">
                             <figure className="img-box w-16 h-16 rounded-full">
                                 <img
@@ -13,7 +14,7 @@ const PostCard = ({ postData }) => {
                                     width={64}
                                     height={64}
                                     alt="Avatar"
-                                    className="object-cover rounded-full"
+                                    className="w-full h-full object-cover object-center rounded-full"
                                 />
                             </figure>
                             <div>
@@ -41,13 +42,14 @@ const PostCard = ({ postData }) => {
                         </div>
                         <div className="flex justify-between mt-4">
                             <div className="flex gap-2">
-                                <button className="px-4 bg-lime-300 rounded-3xl">
+                                <button onClick={() => handleLikePost(post.post_id)} className="px-4 bg-lime-300 rounded-3xl">
                                     <h1 className="text-black font-medium">LIKE</h1>
                                 </button>
-                                <h1>1</h1>
+                                <h1>{post.like_count}</h1>
                             </div>
-                            <h1>2 comments</h1>
+                            <h1>0 comments</h1>
                         </div>
+                    </div>
                     </div>
                 ))
             ) : (

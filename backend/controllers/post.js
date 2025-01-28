@@ -58,11 +58,49 @@ export const createPost = [
 
 export const getPost = asyncHandler(async (req, res) => {
     const result = await db.query(
-        `SELECT post.title, post.post_url, post.created_at, profile.full_name, profile.avatar_url, post_category.category_name
+        `SELECT post.post_id, 
+                post.title, 
+                post.post_url, 
+                post.created_at, 
+                profile.full_name, 
+                profile.avatar_url, 
+                post_category.category_name,
+                COUNT(likes.like_id) AS like_count
          FROM post
          INNER JOIN profile ON post.user_id = profile.user_id
-         INNER JOIN post_category ON post.category_id = post_category.category_id   
-         `
+         INNER JOIN post_category ON post.category_id = post_category.category_id
+         LEFT JOIN likes ON post.post_id = likes.post_id
+         GROUP BY post.post_id, profile.full_name, profile.avatar_url, post_category.category_name
+         ORDER BY post.created_at DESC`
     );
     res.status(200).json({ posts: result.rows });
+});
+
+export const likePost = asyncHandler(async (req, res) => {
+    const { post_id, user_id } = req.body;
+
+    if (!post_id || !user_id) {
+        res.status(400).json({ message: 'Post ID and User ID are required' });
+        return;
+    }
+
+    try {
+        const existingLike = await db.query(`SELECT * FROM likes WHERE post_id = $1 AND user_id = $2`, [post_id, user_id]);
+
+        if (existingLike.rowCount > 0) {
+            // ถ้ามีไลค์อยู่แล้ว -> ลบออกเพื่อยกเลิกไลค์
+            await db.query('DELETE FROM likes WHERE post_id = $1 AND user_id = $2', [post_id, user_id]);
+        } else {
+            // ถ้ายังไม่มีไลค์ -> เพิ่มไลค์ใหม่
+            await db.query('INSERT INTO likes (post_id, user_id, created_at) VALUES ($1, $2, NOW())', [post_id, user_id]);
+        }
+
+        // นับจำนวนไลค์ทั้งหมดของโพสต์
+        const likeCountResult = await db.query('SELECT COUNT(*) AS like_count FROM likes WHERE post_id = $1', [post_id]);
+        res.status(200).json({ like_count: parseInt(likeCountResult.rows[0].like_count, 10) });
+        
+    } catch (error) {
+        console.error('Error liking post:', error);
+        res.status(500).json({ message: 'An error occurred while liking the post' });
+    }
 });

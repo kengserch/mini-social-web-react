@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
-import Filter from "../components/Filter";
-import Hasetag from "../components/Hasetag";
-import PostCard from "../components/PostCard";
-import CreatePostModal from "../components/CreatePostModal";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router";
-import axios from "axios";
+import React, { useState, useContext, useEffect } from 'react';
+import Filter from '../components/Filter';
+import Hasetag from '../components/Hasetag';
+import PostCard from '../components/PostCard';
+import CreatePostModal from '../components/CreatePostModal';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
 
 const Home = () => {
     let navigate = useNavigate();
@@ -13,16 +13,42 @@ const Home = () => {
     const [isCreatedPostOpen, setCreatePost] = useState(false);
     const [postData, setPostData] = useState([]);
 
-
     const handleCreatePostClick = () => {
         if (isAuthenticated && hasProfile) {
             setCreatePost(true);
         } else if (isAuthenticated && !hasProfile) {
-            alert("Please Create Profile first!");
-            navigate("/create-profile");
+            alert('Please Create Profile first!');
+            navigate('/create-profile');
         } else {
-            alert("Please log in to create a post!");
-            navigate("/login");
+            alert('Please log in to create a post!');
+            navigate('/login');
+        }
+    };
+
+    const handleLikePost = async (post_id) => {
+        if (!user) {
+            alert('You need to log in to like posts!');
+            return;
+        }
+        try {
+            const response = await axios.post('http://localhost:8000/api/posts/like', {
+                post_id,
+                user_id: user,
+            });
+            
+            if (response.status === 200) {
+                setPostData((prevPostData) =>
+                    prevPostData.map((post) =>
+                        post.post_id === post_id
+                            ? { ...post, like_count: response.data.like_count }
+                            : post
+                    )
+                );
+            }
+            // console.log('Like successful:', response.data);
+        } catch (error) {
+            console.error('Error liking post:', error);
+            alert('An error occurred while liking the post.');
         }
     };
 
@@ -41,7 +67,7 @@ const Home = () => {
             }
         };
         fetchPost();
-    },[])
+    }, []);
 
     return (
         <div className="container">
@@ -54,7 +80,7 @@ const Home = () => {
                         </button>
                         {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} />}
                     </div>
-                    <PostCard postData={postData} />
+                    <PostCard postData={postData} handleLikePost={handleLikePost} />
                 </div>
                 <Hasetag />
             </div>
