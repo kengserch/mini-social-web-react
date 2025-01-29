@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from "axios";
+import axios from 'axios';
 
-const CreatePostModal = ({ setCreatePost , user }) => {
+const CreatePostModal = ({ setCreatePost, user }) => {
     const [inputs, setInputs] = useState({
         title: '',
         category_id: '',
@@ -20,7 +20,8 @@ const CreatePostModal = ({ setCreatePost , user }) => {
             }));
         } else {
             setInputs((prev) => ({
-                ...prev,[name]: value,
+                ...prev,
+                [name]: value,
             }));
         }
     };
@@ -28,27 +29,26 @@ const CreatePostModal = ({ setCreatePost , user }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!inputs.title || !inputs.category_id) {
-            alert("Please fill in all required fields!");
+            alert('Please fill in all required fields!');
             return;
         }
 
         const formData = new FormData();
-        formData.append("post_image", inputs.post_image);
-        formData.append("user_id", user);
-        formData.append("category_id", parseInt(inputs.category_id));
-        formData.append("title", inputs.title);
+        formData.append('post_image', inputs.post_image);
+        formData.append('user_id', user);
+        formData.append('category_id', parseInt(inputs.category_id));
+        formData.append('title', inputs.title);
 
         try {
-            const response = await axios.post("http://localhost:8000/api/posts", formData, {
+            await axios.post('http://localhost:8000/api/posts', formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    'Content-Type': 'multipart/form-data',
                 },
             });
-            alert("Post create successfully!");
-            console.log(response.data);
+            location.reload();
         } catch (err) {
             console.error(err);
-            alert("Error post profile.");
+            alert('Error post profile.');
         }
 
         console.log('Submitted Data:', inputs);
@@ -57,9 +57,15 @@ const CreatePostModal = ({ setCreatePost , user }) => {
     return (
         <>
             <div className="wrapper-model" onClick={() => setCreatePost(false)}>
-                <div className="post-modal" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="post-modal"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div className="flex justify-end pr-4 pt-3">
-                        <button className="text-white" onClick={() => setCreatePost(false)}>
+                        <button
+                            className="text-white"
+                            onClick={() => setCreatePost(false)}
+                        >
                             X
                         </button>
                     </div>
@@ -76,32 +82,93 @@ const CreatePostModal = ({ setCreatePost , user }) => {
                                 </div>
                             )}
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">Post Image</label>
-                                <input type="file" accept="image/*" name="post_image" onChange={handleChange} className="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm" placeholder="Password..." />
+                                <label className="block mb-2 text-sm text-white">
+                                    Post Image
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    name="post_image"
+                                    onChange={handleChange}
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm"
+                                    placeholder="Password..."
+                                />
                             </div>
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">Post Title</label>
-                                <input type="text" name="title" value={inputs.title} onChange={handleChange} className="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow" placeholder="Post title . . ." />
+                                <label className="block mb-2 text-sm text-white">
+                                    Post Title
+                                </label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={inputs.title}
+                                    onChange={handleChange}
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    placeholder="Post title . . ."
+                                />
                             </div>
 
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">Category</label>
+                                <label className="block mb-2 text-sm text-white">
+                                    Category
+                                </label>
                                 <div className="flex gap-2 items-center">
-                                    <input type="radio" name="category_id" id="general" value="1" checked={inputs.category_id === "1"} onChange={handleChange} />
-                                    <label className="block text-sm text-white">General</label>
-                                    <input type="radio" name="category_id" id="technology" value="2" checked={inputs.category_id === "2"} onChange={handleChange} />
-                                    <label className="block text-sm text-white">Technology</label>
-                                    <input type="radio" name="category_id" id="education" value="3" checked={inputs.category_id === "3"} onChange={handleChange} />
-                                    <label className="block text-sm text-white">Education</label>
-                                    <input type="radio" name="category_id" id="game" value="4" checked={inputs.category_id === "4"} onChange={handleChange} />
-                                    <label className="block text-sm text-white">Game</label>
+                                    <input
+                                        type="radio"
+                                        name="category_id"
+                                        id="general"
+                                        value="1"
+                                        checked={inputs.category_id === '1'}
+                                        onChange={handleChange}
+                                    />
+                                    <label className="block text-sm text-white">
+                                        General
+                                    </label>
+                                    <input
+                                        type="radio"
+                                        name="category_id"
+                                        id="technology"
+                                        value="2"
+                                        checked={inputs.category_id === '2'}
+                                        onChange={handleChange}
+                                    />
+                                    <label className="block text-sm text-white">
+                                        Technology
+                                    </label>
+                                    <input
+                                        type="radio"
+                                        name="category_id"
+                                        id="education"
+                                        value="3"
+                                        checked={inputs.category_id === '3'}
+                                        onChange={handleChange}
+                                    />
+                                    <label className="block text-sm text-white">
+                                        Education
+                                    </label>
+                                    <input
+                                        type="radio"
+                                        name="category_id"
+                                        id="game"
+                                        value="4"
+                                        checked={inputs.category_id === '4'}
+                                        onChange={handleChange}
+                                    />
+                                    <label className="block text-sm text-white">
+                                        Game
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex p-4 justify-center">
-                            <button type="submit" className="py-2  w-full bg-lime-300 rounded-3xl">
-                                <h1 className="text-black font-medium">Create Post</h1>
+                            <button
+                                type="submit"
+                                className="py-2  w-full bg-lime-300 rounded-3xl"
+                            >
+                                <h1 className="text-black font-medium">
+                                    Create Post
+                                </h1>
                             </button>
                         </div>
                     </form>

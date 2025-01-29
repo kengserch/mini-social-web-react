@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Filter from '../components/Filter';
 import Hasetag from '../components/Hasetag';
 import PostCard from '../components/PostCard';
@@ -12,6 +12,7 @@ const Home = () => {
     const { isAuthenticated, hasProfile, user } = useAuth();
     const [isCreatedPostOpen, setCreatePost] = useState(false);
     const [postData, setPostData] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     const handleCreatePostClick = () => {
         if (isAuthenticated && hasProfile) {
@@ -31,11 +32,14 @@ const Home = () => {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:8000/api/posts/like', {
-                post_id,
-                user_id: user,
-            });
-            
+            const response = await axios.post(
+                'http://localhost:8000/api/posts/like',
+                {
+                    post_id,
+                    user_id: user,
+                }
+            );
+
             if (response.status === 200) {
                 setPostData((prevPostData) =>
                     prevPostData.map((post) =>
@@ -55,7 +59,9 @@ const Home = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/posts/');
+                const response = await axios.get(
+                    'http://localhost:8000/api/posts/'
+                );
                 if (response.data.posts) {
                     setPostData(response.data.posts);
                 } else {
@@ -69,18 +75,40 @@ const Home = () => {
         fetchPost();
     }, []);
 
+    const filteredPosts = selectedCategory
+        ? postData.filter(
+              (post) => post.category_name.toLowerCase() === selectedCategory
+          )
+        : postData;
+
     return (
         <div className="container">
             <div className="grid grid-cols-4">
-                <Filter />
+                <Filter
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                />
                 <div className="col-span-2 flex flex-col p-4 h-auto rounded-xl min-h-[200px]">
                     <div className="flex justify-end">
-                        <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={handleCreatePostClick}>
-                            <h1 className="text-black font-bold">Create post</h1>
+                        <button
+                            className="px-4 py-2 bg-lime-300 rounded-3xl"
+                            onClick={handleCreatePostClick}
+                        >
+                            <h1 className="text-black font-bold">
+                                Create post
+                            </h1>
                         </button>
-                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} />}
+                        {isCreatedPostOpen && (
+                            <CreatePostModal
+                                setCreatePost={setCreatePost}
+                                user={user}
+                            />
+                        )}
                     </div>
-                    <PostCard postData={postData} handleLikePost={handleLikePost} />
+                    <PostCard
+                        postData={filteredPosts}
+                        handleLikePost={handleLikePost}
+                    />
                 </div>
                 <Hasetag />
             </div>
