@@ -44,7 +44,11 @@ const Home = () => {
                 setPostData((prevPostData) =>
                     prevPostData.map((post) =>
                         post.post_id === post_id
-                            ? { ...post, like_count: response.data.like_count }
+                            ? {
+                                  ...post,
+                                  like_count: response.data.like_count,
+                                  is_liked: !post.is_liked,
+                              }
                             : post
                     )
                 );
@@ -59,13 +63,13 @@ const Home = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(
-                    'http://localhost:8000/api/posts/'
-                );
+                const url = user
+                    ? `http://localhost:8000/api/posts?user_id=${user}`
+                    : `http://localhost:8000/api/posts`;
+
+                const response = await axios.get(url);
                 if (response.data.posts) {
                     setPostData(response.data.posts);
-                } else {
-                    return null;
                 }
             } catch (error) {
                 console.error('Error fetching post:', error);
@@ -73,7 +77,7 @@ const Home = () => {
             }
         };
         fetchPost();
-    }, []);
+    }, [user]);
 
     const filteredPosts = selectedCategory
         ? postData.filter(

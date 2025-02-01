@@ -43,7 +43,7 @@ const PostCard = ({ postData , handleLikePost }) => {
                         <div className="flex justify-between mt-4">
                             <div className="flex gap-2">
                                 <button onClick={() => handleLikePost(post.post_id)} className="px-4 bg-lime-300 rounded-3xl">
-                                    <h1 className="text-black font-medium">LIKE</h1>
+                                    <h1 className="text-black font-medium">{post.is_liked ? 'UNLIKE' : 'LIKE'}</h1>
                                 </button>
                                 <h1>{post.like_count}</h1>
                             </div>

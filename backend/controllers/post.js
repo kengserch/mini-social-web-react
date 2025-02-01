@@ -57,6 +57,7 @@ export const createPost = [
 ];
 
 export const getPost = asyncHandler(async (req, res) => {
+    const user_id = req.query.user_id || null;
     const result = await db.query(
         `SELECT post.post_id, 
                 post.title, 
@@ -65,13 +66,23 @@ export const getPost = asyncHandler(async (req, res) => {
                 profile.full_name, 
                 profile.avatar_url, 
                 post_category.category_name,
-                COUNT(likes.like_id) AS like_count
+                COUNT(likes.like_id) AS like_count,
+                CASE 
+                    WHEN EXISTS (
+                        SELECT 1 FROM likes 
+                        WHERE likes.post_id = post.post_id 
+                        AND likes.user_id = $1
+                    ) THEN true
+                    ELSE false
+                END AS is_liked
          FROM post
          INNER JOIN profile ON post.user_id = profile.user_id
          INNER JOIN post_category ON post.category_id = post_category.category_id
          LEFT JOIN likes ON post.post_id = likes.post_id
-         GROUP BY post.post_id, profile.full_name, profile.avatar_url, post_category.category_name
-         ORDER BY post.created_at DESC`
+         GROUP BY post.post_id, post.title, post.post_url, post.created_at, 
+         profile.full_name, profile.avatar_url, post_category.category_name
+         ORDER BY post.created_at DESC`,
+         [user_id]
     );
     res.status(200).json({ posts: result.rows });
 });
