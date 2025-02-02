@@ -66,7 +66,8 @@ export const getPost = asyncHandler(async (req, res) => {
                 profile.full_name, 
                 profile.avatar_url, 
                 post_category.category_name,
-                COUNT(likes.like_id) AS like_count,
+                COUNT(DISTINCT likes.like_id) AS like_count,
+                COUNT(DISTINCT comment.comment_id) AS comment_count,
                 CASE 
                     WHEN EXISTS (
                         SELECT 1 FROM likes 
@@ -79,6 +80,7 @@ export const getPost = asyncHandler(async (req, res) => {
          INNER JOIN profile ON post.user_id = profile.user_id
          INNER JOIN post_category ON post.category_id = post_category.category_id
          LEFT JOIN likes ON post.post_id = likes.post_id
+         LEFT JOIN comment ON post.post_id = comment.post_id
          GROUP BY post.post_id, post.title, post.post_url, post.created_at, 
          profile.full_name, profile.avatar_url, post_category.category_name
          ORDER BY post.created_at DESC`,
@@ -114,4 +116,44 @@ export const likePost = asyncHandler(async (req, res) => {
         console.error('Error liking post:', error);
         res.status(500).json({ message: 'An error occurred while liking the post' });
     }
+});
+
+
+export const addComment = asyncHandler(async (req, res) => {
+    const { post_id, user_id, content } = req.body;
+
+    if (!post_id || !user_id || !content.trim()) {
+        return res.status(400).json({ message: "Post ID, User ID, and content are required" });
+    }
+
+    const query = `
+        INSERT INTO comment (post_id, user_id, content, created_at)
+        VALUES ($1, $2, $3, NOW()) RETURNING *;
+    `;
+    const result = await db.query(query, [post_id, user_id, content]);
+
+    res.status(201).json({
+        message: "Comment added successfully!",
+        comment: result.rows[0],
+    });
+});
+
+export const getComments = asyncHandler(async (req, res) => {
+    const { post_id } = req.params;
+
+    if (!post_id) {
+        return res.status(400).json({ message: "Post ID is required" });
+    }
+
+    const query = `
+        SELECT comment.comment_id, comment.content, comment.created_at,
+               profile.full_name, profile.avatar_url
+        FROM comment
+        INNER JOIN profile ON comment.user_id = profile.user_id
+        WHERE comment.post_id = $1
+        ORDER BY comment.created_at ASC;
+    `;
+    const result = await db.query(query, [post_id]);
+
+    res.status(200).json({ comments: result.rows });
 });

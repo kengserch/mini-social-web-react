@@ -13,8 +13,9 @@ const Home = () => {
     const [isCreatedPostOpen, setCreatePost] = useState(false);
     const [postData, setPostData] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [commentModal, setCommentModal] = useState(null);
 
-    const handleCreatePostClick = () => {
+    const handleCreatePost = () => {
         if (isAuthenticated && hasProfile) {
             setCreatePost(true);
         } else if (isAuthenticated && !hasProfile) {
@@ -26,19 +27,28 @@ const Home = () => {
         }
     };
 
+    const handleComment = (post_id) => {
+        if (isAuthenticated && hasProfile) {
+            setCommentModal(post_id);
+        } else if (isAuthenticated && !hasProfile) {
+            alert('Please Create Profile first!');
+            navigate('/create-profile');
+        } else {
+            alert('Please log in to see comment!');
+            navigate('/login');
+        }
+    };
+
     const handleLikePost = async (post_id) => {
         if (!user) {
             alert('You need to log in to like posts!');
             return;
         }
         try {
-            const response = await axios.post(
-                'http://localhost:8000/api/posts/like',
-                {
-                    post_id,
-                    user_id: user,
-                }
-            );
+            const response = await axios.post('http://localhost:8000/api/posts/like', {
+                post_id,
+                user_id: user,
+            });
 
             if (response.status === 200) {
                 setPostData((prevPostData) =>
@@ -60,58 +70,45 @@ const Home = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const url = user
-                    ? `http://localhost:8000/api/posts?user_id=${user}`
-                    : `http://localhost:8000/api/posts`;
+    const fetchPost = async () => {
+        try {
+            const url = user ? `http://localhost:8000/api/posts?user_id=${user}` : `http://localhost:8000/api/posts`;
 
-                const response = await axios.get(url);
-                if (response.data.posts) {
-                    setPostData(response.data.posts);
-                }
-            } catch (error) {
-                console.error('Error fetching post:', error);
-                return null;
+            const response = await axios.get(url);
+            if (response.data.posts) {
+                setPostData(response.data.posts);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching post:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchPost();
     }, [user]);
 
     const filteredPosts = selectedCategory
-        ? postData.filter(
-              (post) => post.category_name.toLowerCase() === selectedCategory
-          )
+        ? postData.filter((post) => post.category_name.toLowerCase() === selectedCategory)
         : postData;
 
     return (
         <div className="container">
             <div className="grid grid-cols-4">
-                <Filter
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                />
+                <Filter selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
                 <div className="col-span-2 flex flex-col p-4 h-auto rounded-xl min-h-[200px]">
                     <div className="flex justify-end">
-                        <button
-                            className="px-4 py-2 bg-lime-300 rounded-3xl"
-                            onClick={handleCreatePostClick}
-                        >
-                            <h1 className="text-black font-bold">
-                                Create post
-                            </h1>
+                        <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={handleCreatePost}>
+                            <h1 className="text-black font-bold">Create post</h1>
                         </button>
-                        {isCreatedPostOpen && (
-                            <CreatePostModal
-                                setCreatePost={setCreatePost}
-                                user={user}
-                            />
-                        )}
+                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} />}
                     </div>
                     <PostCard
                         postData={filteredPosts}
                         handleLikePost={handleLikePost}
+                        fetchPost={fetchPost}
+                        commentModal={commentModal}
+                        handleComment={handleComment}
+                        setCommentModal={setCommentModal}
                     />
                 </div>
                 <Hasetag />
