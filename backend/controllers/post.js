@@ -68,6 +68,7 @@ export const getPost = asyncHandler(async (req, res) => {
                 post_category.category_name,
                 COUNT(DISTINCT likes.like_id) AS like_count,
                 COUNT(DISTINCT comment.comment_id) AS comment_count,
+                COUNT(DISTINCT post.category_id)  AS category_count,
                 CASE 
                     WHEN EXISTS (
                         SELECT 1 FROM likes 
@@ -84,9 +85,22 @@ export const getPost = asyncHandler(async (req, res) => {
          GROUP BY post.post_id, post.title, post.post_url, post.created_at, 
          profile.full_name, profile.avatar_url, post_category.category_name
          ORDER BY post.created_at DESC`,
-         [user_id]
+        [user_id]
     );
-    res.status(200).json({ posts: result.rows });
+
+    const category_count = await db.query(`
+        SELECT 
+        post_category.category_name,
+        COUNT(post.post_id) AS post_count
+        FROM post_category
+        LEFT JOIN post ON post.category_id = post_category.category_id
+        GROUP BY post_category.category_name
+        ORDER BY post_count DESC;
+    `);
+    res.status(200).json({ 
+        posts: result.rows,
+        posts_count : category_count.rows
+     });
 });
 
 export const likePost = asyncHandler(async (req, res) => {
@@ -98,32 +112,38 @@ export const likePost = asyncHandler(async (req, res) => {
     }
 
     try {
-        const existingLike = await db.query(`SELECT * FROM likes WHERE post_id = $1 AND user_id = $2`, [post_id, user_id]);
+        const existingLike = await db.query(`SELECT * FROM likes WHERE post_id = $1 AND user_id = $2`, [
+            post_id,
+            user_id,
+        ]);
 
         if (existingLike.rowCount > 0) {
             // ถ้ามีไลค์อยู่แล้ว -> ลบออกเพื่อยกเลิกไลค์
             await db.query('DELETE FROM likes WHERE post_id = $1 AND user_id = $2', [post_id, user_id]);
         } else {
             // ถ้ายังไม่มีไลค์ -> เพิ่มไลค์ใหม่
-            await db.query('INSERT INTO likes (post_id, user_id, created_at) VALUES ($1, $2, NOW())', [post_id, user_id]);
+            await db.query('INSERT INTO likes (post_id, user_id, created_at) VALUES ($1, $2, NOW())', [
+                post_id,
+                user_id,
+            ]);
         }
 
         // นับจำนวนไลค์ทั้งหมดของโพสต์
-        const likeCountResult = await db.query('SELECT COUNT(*) AS like_count FROM likes WHERE post_id = $1', [post_id]);
+        const likeCountResult = await db.query('SELECT COUNT(*) AS like_count FROM likes WHERE post_id = $1', [
+            post_id,
+        ]);
         res.status(200).json({ like_count: parseInt(likeCountResult.rows[0].like_count, 10) });
-        
     } catch (error) {
         console.error('Error liking post:', error);
         res.status(500).json({ message: 'An error occurred while liking the post' });
     }
 });
 
-
 export const addComment = asyncHandler(async (req, res) => {
     const { post_id, user_id, content } = req.body;
 
     if (!post_id || !user_id || !content.trim()) {
-        return res.status(400).json({ message: "Post ID, User ID, and content are required" });
+        return res.status(400).json({ message: 'Post ID, User ID, and content are required' });
     }
 
     const query = `
@@ -133,7 +153,7 @@ export const addComment = asyncHandler(async (req, res) => {
     const result = await db.query(query, [post_id, user_id, content]);
 
     res.status(201).json({
-        message: "Comment added successfully!",
+        message: 'Comment added successfully!',
         comment: result.rows[0],
     });
 });
@@ -142,7 +162,7 @@ export const getComments = asyncHandler(async (req, res) => {
     const { post_id } = req.params;
 
     if (!post_id) {
-        return res.status(400).json({ message: "Post ID is required" });
+        return res.status(400).json({ message: 'Post ID is required' });
     }
 
     const query = `

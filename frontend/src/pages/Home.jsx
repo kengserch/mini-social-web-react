@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Filter from '../components/Filter';
-import Hasetag from '../components/Hasetag';
+import Trend from '../components/Trend';
 import PostCard from '../components/PostCard';
 import CreatePostModal from '../components/CreatePostModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,6 +12,7 @@ const Home = () => {
     const { isAuthenticated, hasProfile, user } = useAuth();
     const [isCreatedPostOpen, setCreatePost] = useState(false);
     const [postData, setPostData] = useState([]);
+    const [postCount, setPostCount] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [commentModal, setCommentModal] = useState(null);
 
@@ -77,6 +78,7 @@ const Home = () => {
             const response = await axios.get(url);
             if (response.data.posts) {
                 setPostData(response.data.posts);
+                setPostCount(response.data.posts_count);
             }
         } catch (error) {
             console.error('Error fetching post:', error);
@@ -111,7 +113,7 @@ const Home = () => {
                         setCommentModal={setCommentModal}
                     />
                 </div>
-                <Hasetag />
+                <Trend postCount={postCount} />
             </div>
         </div>
     );
