@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const CreatePostModal = ({ setCreatePost, user }) => {
@@ -8,6 +8,13 @@ const CreatePostModal = ({ setCreatePost, user }) => {
         post_image: null,
         preview: null,
     });
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -57,15 +64,9 @@ const CreatePostModal = ({ setCreatePost, user }) => {
     return (
         <>
             <div className="wrapper-model" onClick={() => setCreatePost(false)}>
-                <div
-                    className="post-modal"
-                    onClick={(e) => e.stopPropagation()}
-                >
+                <div className="post-modal" onClick={(e) => e.stopPropagation()}>
                     <div className="flex justify-end pr-4 pt-3">
-                        <button
-                            className="text-white"
-                            onClick={() => setCreatePost(false)}
-                        >
+                        <button className="text-white" onClick={() => setCreatePost(false)}>
                             X
                         </button>
                     </div>
@@ -82,9 +83,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                 </div>
                             )}
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">
-                                    Post Image
-                                </label>
+                                <label className="block mb-2 text-sm text-white">Post Image</label>
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -95,9 +94,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                 />
                             </div>
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">
-                                    Post Title
-                                </label>
+                                <label className="block mb-2 text-sm text-white">Post Title</label>
                                 <input
                                     type="text"
                                     name="title"
@@ -109,9 +106,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                             </div>
 
                             <div className="w-full">
-                                <label className="block mb-2 text-sm text-white">
-                                    Category
-                                </label>
+                                <label className="block mb-2 text-sm text-white">Category</label>
                                 <div className="flex gap-2 items-center">
                                     <input
                                         type="radio"
@@ -121,9 +116,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                         checked={inputs.category_id === '1'}
                                         onChange={handleChange}
                                     />
-                                    <label className="block text-sm text-white">
-                                        General
-                                    </label>
+                                    <label className="block text-sm text-white">General</label>
                                     <input
                                         type="radio"
                                         name="category_id"
@@ -132,9 +125,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                         checked={inputs.category_id === '2'}
                                         onChange={handleChange}
                                     />
-                                    <label className="block text-sm text-white">
-                                        Technology
-                                    </label>
+                                    <label className="block text-sm text-white">Technology</label>
                                     <input
                                         type="radio"
                                         name="category_id"
@@ -143,9 +134,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                         checked={inputs.category_id === '3'}
                                         onChange={handleChange}
                                     />
-                                    <label className="block text-sm text-white">
-                                        Education
-                                    </label>
+                                    <label className="block text-sm text-white">Education</label>
                                     <input
                                         type="radio"
                                         name="category_id"
@@ -154,21 +143,14 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                         checked={inputs.category_id === '4'}
                                         onChange={handleChange}
                                     />
-                                    <label className="block text-sm text-white">
-                                        Game
-                                    </label>
+                                    <label className="block text-sm text-white">Game</label>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex p-4 justify-center">
-                            <button
-                                type="submit"
-                                className="py-2  w-full bg-lime-300 rounded-3xl"
-                            >
-                                <h1 className="text-black font-medium">
-                                    Create Post
-                                </h1>
+                            <button type="submit" className="py-2  w-full bg-lime-300 rounded-3xl">
+                                <h1 className="text-black font-medium">Create Post</h1>
                             </button>
                         </div>
                     </form>

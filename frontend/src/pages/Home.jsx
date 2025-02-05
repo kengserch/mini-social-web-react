@@ -95,7 +95,7 @@ const Home = () => {
 
     return (
         <div className="container">
-            <div className="grid grid-cols-4">
+            <div className="grid grid-cols-1 md:grid-cols-4">
                 <Filter selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
                 <div className="col-span-2 flex flex-col p-4 h-auto rounded-xl min-h-[200px]">
                     <div className="flex justify-end">

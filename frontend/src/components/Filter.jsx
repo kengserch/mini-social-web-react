@@ -15,7 +15,7 @@ const Filter = ({ selectedCategory, setSelectedCategory }) => {
     };
 
     return (
-        <div className="flex flex-col gap-4 justify-start p-4 sticky top-28 h-[200px] rounded-xl">
+        <div className="flex flex-col gap-4 justify-start p-4  h-[200px] rounded-xl md:sticky md:top-28">
             <h1 className="text-xl font-bold">Filters</h1>
             <h1 className="text-xl">Select Topic</h1>
             <div className="flex flex-wrap gap-2">

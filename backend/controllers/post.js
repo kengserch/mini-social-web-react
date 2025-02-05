@@ -45,8 +45,7 @@ export const createPost = [
         }
 
         const query = `
-              INSERT INTO post (user_id, category_id, title, post_url) VALUES ($1, $2, $3, $4) RETURNING *;
-              `;
+              INSERT INTO post (user_id, category_id, title, post_url) VALUES ($1, $2, $3, $4) RETURNING *;`;
         const result = await db.query(query, [user_id, category_id, title, postUrl]);
 
         return res.status(201).json({
@@ -77,14 +76,14 @@ export const getPost = asyncHandler(async (req, res) => {
                     ) THEN true
                     ELSE false
                 END AS is_liked
-         FROM post
-         INNER JOIN profile ON post.user_id = profile.user_id
-         INNER JOIN post_category ON post.category_id = post_category.category_id
-         LEFT JOIN likes ON post.post_id = likes.post_id
-         LEFT JOIN comment ON post.post_id = comment.post_id
-         GROUP BY post.post_id, post.title, post.post_url, post.created_at, 
-         profile.full_name, profile.avatar_url, post_category.category_name
-         ORDER BY post.created_at DESC`,
+                FROM post
+                INNER JOIN profile ON post.user_id = profile.user_id
+                INNER JOIN post_category ON post.category_id = post_category.category_id
+                LEFT JOIN likes ON post.post_id = likes.post_id
+                LEFT JOIN comment ON post.post_id = comment.post_id
+                GROUP BY post.post_id, post.title, post.post_url, post.created_at, 
+                profile.full_name, profile.avatar_url, post_category.category_name
+                ORDER BY post.created_at DESC`,
         [user_id]
     );
 
@@ -97,10 +96,10 @@ export const getPost = asyncHandler(async (req, res) => {
         GROUP BY post_category.category_name
         ORDER BY post_count DESC;
     `);
-    res.status(200).json({ 
+    res.status(200).json({
         posts: result.rows,
-        posts_count : category_count.rows
-     });
+        posts_count: category_count.rows,
+    });
 });
 
 export const likePost = asyncHandler(async (req, res) => {
@@ -167,7 +166,7 @@ export const getComments = asyncHandler(async (req, res) => {
 
     const query = `
         SELECT comment.comment_id, comment.content, comment.created_at,
-               profile.full_name, profile.avatar_url
+        profile.full_name, profile.avatar_url
         FROM comment
         INNER JOIN profile ON comment.user_id = profile.user_id
         WHERE comment.post_id = $1

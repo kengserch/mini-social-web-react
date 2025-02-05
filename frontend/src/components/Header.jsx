@@ -32,7 +32,7 @@ const Header = () => {
 
     return (
         <header className="fixed top-0 left-0 w-full h-20 flex items-center z-40 bg-zinc-950">
-            <div className="max-w-screen-xl w-full mx-auto flex justify-between items-center">
+            <div className="max-w-screen-xl w-full mx-auto flex justify-between items-center px-5">
                 <div>
                     <Link to="/">
                         <figure className="w-24 h-auto flex items-center">
@@ -40,7 +40,7 @@ const Header = () => {
                         </figure>
                     </Link>
                 </div>
-                <div className="flex gap-2 mr-6">
+                <div className="flex gap-2">
                     {!isAuthenticated ? (
                         <Link to="/login">
                             <button className="px-4 py-1 bg-lime-300 rounded-3xl">
