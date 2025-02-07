@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const CreatePostModal = ({ setCreatePost, user }) => {
     const [inputs, setInputs] = useState({
@@ -47,7 +48,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
         formData.append('title', inputs.title);
 
         try {
-            await axios.post('http://localhost:8000/api/posts', formData, {
+            await axios.post(`${API_BASE_URL}/posts`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

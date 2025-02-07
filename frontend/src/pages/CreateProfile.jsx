@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
+import { API_BASE_URL } from "../config";
+
 
 const CreateProfile = () => {
     const { user } = useAuth();
@@ -34,7 +36,7 @@ const CreateProfile = () => {
         formData.append("bio", bio);
 
         try {
-            const response = await axios.post("http://localhost:8000/api/profiles/create-profile", formData, {
+            const response = await axios.post(`${API_BASE_URL}/profiles/create-profile`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

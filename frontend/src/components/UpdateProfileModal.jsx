@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
+import { API_BASE_URL } from "../config";
 
 const ProfileModal = ({ setProfile, profileData }) => {
     const { user } = useAuth();
@@ -34,7 +35,7 @@ const ProfileModal = ({ setProfile, profileData }) => {
         }
 
         try {
-            const response = await axios.put("http://localhost:8000/api/profiles/update-profile", formData, {
+            const response = await axios.put(`${API_BASE_URL}/profiles/update-profile`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

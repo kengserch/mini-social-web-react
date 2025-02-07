@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config';
 
 const Comment = ({ setCommentModal, post_id, fetchPost }) => {
     const { user } = useAuth();
@@ -12,7 +13,7 @@ const Comment = ({ setCommentModal, post_id, fetchPost }) => {
     const fetchComments = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`http://localhost:8000/api/posts/${post_id}/comments`);
+            const res = await axios.get(`${API_BASE_URL}/posts/${post_id}/comments`);
             setComments(res.data.comments);
         } catch (error) {
             console.error('Error fetching comments:', error);
@@ -41,7 +42,7 @@ const Comment = ({ setCommentModal, post_id, fetchPost }) => {
         if (!content.trim()) return alert('Comment cannot be empty!');
 
         try {
-            await axios.post('http://localhost:8000/api/posts/comment', {
+            await axios.post(`${API_BASE_URL}/posts/comment`, {
                 post_id,
                 user_id: user,
                 content,

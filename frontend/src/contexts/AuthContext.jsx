@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import AxiosInstance from '../utils/AxiosInstance';
+import { API_BASE_URL } from '../config';
 
 export const AuthContext = createContext();
 
@@ -64,7 +65,7 @@ const AuthProvider = ({ children }) => {
 
     const loginAction = async (inputs) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/users/login', inputs);
+            const response = await axios.post(`${API_BASE_URL}/users/login`, inputs);
             if (response.data.status === 'ok' && response.data.token) {
                 const token = response.data.token;
                 setToken(token);
@@ -93,7 +94,7 @@ const AuthProvider = ({ children }) => {
     const fetchProfile = async (userId) => {
         setIsProfileLoading(true);
         try {
-            const response = await AxiosInstance.get(`/api/profiles/${userId}`, {
+            const response = await AxiosInstance.get(`/profiles/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (response.data.profile) {
@@ -115,7 +116,7 @@ const AuthProvider = ({ children }) => {
 
     const fetchProfileById = async (userId) => {
         try {
-            const response = await AxiosInstance.get(`/api/profiles/${userId}`, {
+            const response = await AxiosInstance.get(`/profiles/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (response.data.profile) {

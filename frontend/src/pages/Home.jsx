@@ -6,6 +6,8 @@ import CreatePostModal from '../components/CreatePostModal';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 
 const Home = () => {
     let navigate = useNavigate();
@@ -46,7 +48,7 @@ const Home = () => {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:8000/api/posts/like', {
+            const response = await axios.post(`${API_BASE_URL}/posts/like`, {
                 post_id,
                 user_id: user,
             });
@@ -73,7 +75,7 @@ const Home = () => {
 
     const fetchPost = async () => {
         try {
-            const url = user ? `http://localhost:8000/api/posts?user_id=${user}` : `http://localhost:8000/api/posts`;
+            const url = user ? `${API_BASE_URL}/posts?user_id=${user}` : `${API_BASE_URL}/posts`;
 
             const response = await axios.get(url);
             if (response.data.posts) {
