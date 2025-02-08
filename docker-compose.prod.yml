@@ -1,29 +1,38 @@
 services:
   frontend:
-    build: ./frontend
+    image: kengsert/mini-social-web-frontend:latest
     ports:
       - "80:80"
     depends_on:
       - backend
+    environment:
+      - VITE_API_BASE_URL=http://52.77.217.61:8000/api  
 
   backend:
-    build: ./backend
+    image: kengsert/mini-social-web-backend:latest
+    environment:
+      - NODE_ENV=production
     ports:
-      - "${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}"  
+      - "8000:8000"   
     depends_on:
       - postgresdb
     env_file:
-      - ./backend/.env
+      - ./backend/.env.production
 
   postgresdb:
     image: postgres:15
     container_name: postgresdb
     restart: always
     env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB 
     ports:
-      - "${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}"
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    
 
 volumes:
   postgres-data:
