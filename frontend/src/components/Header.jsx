@@ -51,7 +51,7 @@ const Header = () => {
                         <div className="relative">
                             <div className="flex items-center gap-3 cursor-pointer" onClick={menuToggle}>
                                 <figure className="img-box w-10 h-10 rounded-full ring-2 ring-blue-500 relative">
-                                    <img src={profileData?.avatar_url || "./images/hand-drawn.avif"} width={40} height={40} alt="Profile Avatar" className="w-full h-full object-cover"/>
+                                    <img src={profileData.avatar_url || "/images/hand-drawn.avif"} width={40} height={40} alt="Profile Avatar" className="w-full h-full object-cover"/>
                                 </figure>
                                 <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData?.username || "Guest User"}</h1>
                             </div>
