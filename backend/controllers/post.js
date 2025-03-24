@@ -139,17 +139,17 @@ export const likePost = asyncHandler(async (req, res) => {
 });
 
 export const addComment = asyncHandler(async (req, res) => {
-    const { post_id, user_id, content } = req.body;
+    const { post_id, user_id, comment } = req.body;
 
-    if (!post_id || !user_id || !content.trim()) {
-        return res.status(400).json({ message: 'Post ID, User ID, and content are required' });
+    if (!post_id || !user_id || !comment.trim()) {
+        return res.status(400).json({ message: 'Post ID, User ID, and comment are required' });
     }
 
     const query = `
-        INSERT INTO comment (post_id, user_id, content, created_at)
+        INSERT INTO comment (post_id, user_id, comment, created_at)
         VALUES ($1, $2, $3, NOW()) RETURNING *;
     `;
-    const result = await db.query(query, [post_id, user_id, content]);
+    const result = await db.query(query, [post_id, user_id, comment]);
 
     res.status(201).json({
         message: 'Comment added successfully!',
@@ -165,7 +165,7 @@ export const getComments = asyncHandler(async (req, res) => {
     }
 
     const query = `
-        SELECT comment.comment_id, comment.content, comment.created_at,
+        SELECT comment.comment_id, comment.comment, comment.created_at,
         profile.full_name, profile.avatar_url
         FROM comment
         INNER JOIN profile ON comment.user_id = profile.user_id
