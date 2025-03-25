@@ -1,4 +1,5 @@
 import Comment from './Comment';
+import { TbThumbUp, TbThumbUpFilled } from 'react-icons/tb';
 
 const PostCard = ({
     postData,
@@ -43,27 +44,33 @@ const PostCard = ({
                                     </figure>
                                 </div>
                                 <div>
-                                    <button className="px-4 border-2 border-amber-600 rounded-3xl">
-                                        <h1 className="text-white font-medium">{post.category_name}</h1>
-                                    </button>
+                                    <h1 className="text-white font-medium text-base">#{post.category_name}</h1>
                                 </div>
                             </div>
                             <div className="flex justify-between mt-4">
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleLikePost(post.post_id)}
-                                        className="px-4 bg-lime-300 rounded-3xl"
-                                    >
-                                        <h1 className="text-black font-medium">{post.is_liked ? 'UNLIKE' : 'LIKE'}</h1>
+                                <div className="flex gap-2 items-center">
+                        
+                                    <button onClick={() => handleLikePost(post.post_id)} className="rounded-3xl">
+                                        <h1>
+                                            {post.is_liked ? (
+                                                <h1 className="text-amber-600 flex items-center">
+                                                    <TbThumbUpFilled className="w-8 h-8" /> Like
+                                                </h1>
+                                            ) : (
+                                                <h1 className="text-white flex items-center">
+                                                    <TbThumbUp className="w-8 h-8" /> Like
+                                                </h1>
+                                            )}
+                                        </h1>
                                     </button>
-                                    <h1>{post.like_count}</h1>
+                                    <h1>- {post.like_count} like</h1>
                                 </div>
                                 <button onClick={() => handleComment(post.post_id)}>
                                     {post.comment_count} comments
                                 </button>
-                                {commentModal === post.post_id && ( 
+                                {commentModal === post.post_id && (
                                     <Comment
-                                        setCommentModal={setCommentModal} 
+                                        setCommentModal={setCommentModal}
                                         post_id={post.post_id}
                                         fetchPost={fetchPost}
                                         setPostData={setPostData}
