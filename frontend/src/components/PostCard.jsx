@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { TbThumbUp, TbThumbUpFilled, TbDots, TbEdit, TbTrash } from 'react-icons/tb';
 import EditPostModal from './EditPostModal';
 import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const PostCard = ({
     postData,
@@ -24,6 +26,17 @@ const PostCard = ({
     const handleEditPost = (post) => {
         setSelectedPost(post);
         setPostEdit(true);
+    };
+    const handleDeletePost = async (post_id) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this post?');
+        if (!confirmDelete) return;
+        try {
+            await axios.delete(`${API_BASE_URL}/posts/${post_id}`);
+            location.reload()
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            alert('Failed to delete the post.');
+        }
     };
 
     return (
@@ -66,7 +79,7 @@ const PostCard = ({
                                                 <h1 className="px-1 py-1 hover:bg-zinc-600 hover:rounded-md">
                                                     <TbTrash
                                                         className="w-5 h-5"
-                                                        
+                                                        onClick={() => handleDeletePost(post.post_id)}
                                                     />
                                                 </h1>
                                             </div>
