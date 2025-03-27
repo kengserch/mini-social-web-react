@@ -202,3 +202,20 @@ export const updatePost = asyncHandler(async (req, res) => {
         updatedPost: result.rows[0],
     });
 });
+
+export const deletePost = asyncHandler(async (req, res) => {
+    const { post_id } = req.params;
+
+    console.log("Deleting post with post_id:", post_id);
+
+    const result = await db.query('DELETE FROM post WHERE post_id = $1 RETURNING *;', [post_id]);
+
+    if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Post not found or already deleted." });
+    }
+
+    return res.status(200).json({
+        message: "Post deleted successfully!",
+        deletedPost: result.rows[0], 
+    });
+});
