@@ -59,6 +59,7 @@ export const getPost = asyncHandler(async (req, res) => {
     const user_id = req.query.user_id || null;
     const result = await db.query(
         `SELECT post.post_id, 
+                post.user_id, 
                 post.title, 
                 post.post_url, 
                 post.created_at, 
@@ -175,4 +176,29 @@ export const getComments = asyncHandler(async (req, res) => {
     const result = await db.query(query, [post_id]);
 
     res.status(200).json({ comments: result.rows });
+});
+
+
+export const updatePost = asyncHandler(async (req, res) => {
+    const { user_id, post_id, title } = req.body;
+
+    console.log("Received data:", { user_id, post_id, title });
+
+    const query = `
+        UPDATE post 
+        SET title = $1, created_at = NOW() 
+        WHERE user_id = $2 AND post_id = $3  
+        RETURNING *;
+    `;
+    const result = await db.query(query, [title, user_id, post_id]);
+
+    
+    if (result.rowCount === 0) {
+        return res.status(400).json({ message: "Update failed, no matching post found." });
+    }
+
+    return res.status(200).json({
+        message: "Post updated successfully!",
+        updatedPost: result.rows[0],
+    });
 });
