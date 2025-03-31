@@ -14,15 +14,15 @@ const Header = () => {
 
     const handleProfileClick = () => {
         setShowMenu(false);
-        navigate(`/profile/${user}`); // ใช้ user ID จาก Context
+        navigate(`/profile/${user}`); 
     };
 
     useEffect(() => {
         if (!user || !hasProfile) {
             return;
         }
+        
     }, [user, hasProfile]);
-
     // if (authLoading || isFetching) {
     //     return (
     //         <div className="flex items-center justify-center h-screen">
@@ -51,9 +51,9 @@ const Header = () => {
                         <div className="relative">
                             <div className="flex items-center gap-3 cursor-pointer" onClick={menuToggle}>
                                 <figure className="img-box w-10 h-10 rounded-full ring-2 ring-blue-500 relative">
-                                    <img src={profileData.avatar_url || "/images/hand-drawn.avif"} width={40} height={40} alt="Profile Avatar" className="w-full h-full object-cover"/>
+                                    <img src={profileData?.avatar_url ?? "/images/hand-drawn.avif"} width={40} height={40} alt="Profile Avatar" className="w-full h-full object-cover"/>
                                 </figure>
-                                <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData?.username || "Guest User"}</h1>
+                                <h1 className="bg-zinc-800 py-2 pl-8 pr-4 -ml-8 rounded-2xl">{profileData?.username ?? "Guest User"}</h1>
                             </div>
                             <div className={`w-44 h-auto bg-zinc-900 absolute rounded-lg inset-x-0 mt-2 origin-top transform transition-transform ease-in-out duration-75 ${showMenu ? "scale-y-100" : "scale-y-0"}`}>
                                 <div className="flex px-2 py-1 flex-col gap-1 cursor-pointer">
