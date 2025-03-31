@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router';
 import axios from 'axios';
 import { API_BASE_URL } from '../config';
 
-
 const Home = () => {
     let navigate = useNavigate();
     const { isAuthenticated, hasProfile, user } = useAuth();
@@ -43,33 +42,37 @@ const Home = () => {
     };
 
     const handleLikePost = async (post_id) => {
-        if (!user) {
-            alert('You need to log in to like posts!');
-            return;
-        }
-        try {
-            const response = await axios.post(`${API_BASE_URL}/posts/like`, {
-                post_id,
-                user_id: user,
-            });
+        if (isAuthenticated && hasProfile) {
+            try {
+                const response = await axios.post(`${API_BASE_URL}/posts/like`, {
+                    post_id,
+                    user_id: user,
+                });
 
-            if (response.status === 200) {
-                setPostData((prevPostData) =>
-                    prevPostData.map((post) =>
-                        post.post_id === post_id
-                            ? {
-                                  ...post,
-                                  like_count: response.data.like_count,
-                                  is_liked: !post.is_liked,
-                              }
-                            : post
-                    )
-                );
+                if (response.status === 200) {
+                    setPostData((prevPostData) =>
+                        prevPostData.map((post) =>
+                            post.post_id === post_id
+                                ? {
+                                      ...post,
+                                      like_count: response.data.like_count,
+                                      is_liked: !post.is_liked,
+                                  }
+                                : post
+                        )
+                    );
+                }
+                // console.log('Like successful:', response.data);
+            } catch (error) {
+                console.error('Error liking post:', error);
+                alert('An error occurred while liking the post.');
             }
-            // console.log('Like successful:', response.data);
-        } catch (error) {
-            console.error('Error liking post:', error);
-            alert('An error occurred while liking the post.');
+        } else if (isAuthenticated && !hasProfile) {
+            alert('Please Create Profile first!');
+            navigate('/create-profile');
+        } else {
+            alert('You need to log in to like posts!');
+            navigate('/login');
         }
     };
 
