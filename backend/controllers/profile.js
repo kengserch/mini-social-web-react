@@ -45,7 +45,7 @@ export const createProfile = [
         }
 
         const query = `
-              INSERT INTO profile (user_id, full_name, avatar_url, bio) VALUES ($1, $2, $3, $4) RETURNING *;
+              INSERT INTO profile (user_id, full_name, avatar_url, bio, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *;
               `;
         const result = await db.query(query, [user_id, full_name, avatarUrl, bio]);
 
@@ -69,7 +69,7 @@ export const updateProfile = [
                             full_name = $1, 
                             bio = $2, 
                             avatar_url = COALESCE($3, avatar_url), 
-                            created_at = NOW() 
+                            updated_at = NOW() 
                             WHERE user_id = $4 RETURNING *; `;
         const result = await db.query(query, [full_name, bio, avatarUrl, user_id]);
 
@@ -96,18 +96,4 @@ export const getProfile = asyncHandler(async (req, res) => {
     res.json({ profile: result.rows[0] });
 });
 
-//     const { userId } = req.params;
 
-//     try {
-//         const result = await db.query("SELECT * FROM profile WHERE user_id = $1", [userId]);
-
-//         if (result.rows.length > 0) {
-//             res.status(200).json({ hasProfile: true });
-//         } else {
-//             res.status(200).json({ hasProfile: false });
-//         }
-//     } catch (error) {
-//         console.error("Error checking profile:", error);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// });

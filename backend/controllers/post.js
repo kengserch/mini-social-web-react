@@ -45,7 +45,7 @@ export const createPost = [
         }
 
         const query = `
-              INSERT INTO post (user_id, category_id, title, post_url) VALUES ($1, $2, $3, $4) RETURNING *;`;
+              INSERT INTO post (user_id, category_id, title, post_url, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *;`;
         const result = await db.query(query, [user_id, category_id, title, postUrl]);
 
         return res.status(201).json({
@@ -68,15 +68,12 @@ export const getPost = asyncHandler(async (req, res) => {
                 post_category.category_name,
                 COUNT(DISTINCT likes.like_id) AS like_count,
                 COUNT(DISTINCT comment.comment_id) AS comment_count,
-                COUNT(DISTINCT post.category_id)  AS category_count,
-                CASE 
-                    WHEN EXISTS (
-                        SELECT 1 FROM likes 
-                        WHERE likes.post_id = post.post_id 
-                        AND likes.user_id = $1
-                    ) THEN true
-                    ELSE false
-                END AS is_liked
+                COALESCE((
+                    SELECT true FROM likes 
+                    WHERE likes.post_id = post.post_id 
+                    AND likes.user_id = $1
+                    LIMIT 1
+                ), false) AS is_liked
                 FROM post
                 INNER JOIN profile ON post.user_id = profile.user_id
                 INNER JOIN post_category ON post.category_id = post_category.category_id
@@ -186,7 +183,7 @@ export const updatePost = asyncHandler(async (req, res) => {
 
     const query = `
         UPDATE post 
-        SET title = $1, created_at = NOW() 
+        SET title = $1, updated_at = NOW() 
         WHERE user_id = $2 AND post_id = $3  
         RETURNING *;
     `;
