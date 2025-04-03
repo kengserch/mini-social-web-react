@@ -81,13 +81,9 @@ const AuthProvider = ({ children }) => {
                     navigate('/create-profile');
                 }
                 console.log('Logged in successfully.');
-            } else {
-                console.log('Login failed');
-                alert('Login failed. Please check your credentials.');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            alert('Login failed. Please check your credentials or try again later.');
+            alert(error.response?.data?.message || 'Login failed. Please try again later.');
         }
     };
 
