@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router';
 import { useAuth } from './contexts/AuthContext';
+import { ToastContainer, Flip } from 'react-toastify';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -25,20 +26,55 @@ function App() {
     }
 
     return (
-        <Routes>
-            {/* หน้า Home */}
-            <Route element={<HomeLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="profile/:id" element={isAuthenticated ? hasProfile ? <Profile /> : <Navigate to="/create-profile" /> : <Navigate to="/login" />} />
-                <Route path="create-profile" element={isAuthenticated ? hasProfile ? <Navigate to="/" /> : <CreateProfile /> : <Navigate to="/login" />} />
-            </Route>
-
-            {/* หน้า Login/Register */}
-            <Route>
-                <Route path="login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
-                <Route path="register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
-            </Route>
-        </Routes>
+        <>
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                transition={Flip}
+                theme="dark"
+            />
+            <Routes>
+                <Route element={<HomeLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route
+                        path="profile/:id"
+                        element={
+                            isAuthenticated ? (
+                                hasProfile ? (
+                                    <Profile />
+                                ) : (
+                                    <Navigate to="/create-profile" />
+                                )
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                    <Route
+                        path="create-profile"
+                        element={
+                            isAuthenticated ? (
+                                hasProfile ? (
+                                    <Navigate to="/" />
+                                ) : (
+                                    <CreateProfile />
+                                )
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                </Route>
+                <Route>
+                    <Route path="login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
+                    <Route path="register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
+                </Route>
+            </Routes>
+        </>
     );
 }
 

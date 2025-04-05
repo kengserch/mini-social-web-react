@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import axios from 'axios';
 import AxiosInstance from '../utils/AxiosInstance';
 import { API_BASE_URL } from '../config';
+import { toast } from 'react-toastify';
 
 export const AuthContext = createContext();
 
@@ -25,6 +26,7 @@ const AuthProvider = ({ children }) => {
         setToken('');
         setHasProfile(false);
         console.log('Logged out successfully.');
+        toast.success('Logged out successfully!');
     };
 
     const setTokenExpiryTimer = (expiryTime) => {
@@ -33,9 +35,11 @@ const AuthProvider = ({ children }) => {
 
         if (timeLeft > 0) {
             setTimeout(() => {
-                alert('Token expired, logging out');
+                toast.warning('Token expired, logging out');
+                setTimeout(() => {
+                    handleLogout();
+                }, 1500);
                 console.log('Token expired, logging out.');
-                handleLogout();
             }, timeLeft * 1000); // แปลงวินาทีเป็นมิลลิวินาที
         } else {
             handleLogout();
@@ -61,8 +65,6 @@ const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
-    
-
     const loginAction = async (inputs) => {
         try {
             const response = await axios.post(`${API_BASE_URL}/users/login`, inputs);
@@ -73,17 +75,20 @@ const AuthProvider = ({ children }) => {
                 setUser(decoded.userId);
                 localStorage.setItem('token', token);
                 setIsAuthenticated(true);
-
                 await fetchProfile(decoded.userId);
+
                 if (hasProfile) {
                     navigate('/');
                 } else {
                     navigate('/create-profile');
                 }
+                setTimeout(() => {
+                    toast.success('Logged in successfully!');
+                }, 50);
                 console.log('Logged in successfully.');
             }
         } catch (error) {
-            alert(error.response?.data?.message || 'Login failed. Please try again later.');
+            toast.error(error.response?.data?.message || 'Login failed. Please try again later.');
         }
     };
 

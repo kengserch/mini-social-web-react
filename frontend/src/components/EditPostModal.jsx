@@ -3,17 +3,17 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '../contexts/AuthContext';
-import axios from "axios";
-import { API_BASE_URL } from "../config";
-
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     title: yup.string().required('Title is required'),
 });
 
 function EditPostModal({ setPostEdit, post }) {
-        const { user } = useAuth();
-    
+    const { user } = useAuth();
+
     const {
         register,
         handleSubmit,
@@ -40,22 +40,21 @@ function EditPostModal({ setPostEdit, post }) {
             post_id: post.post_id,
             title: data.title,
         };
-    
-        console.log("Sending data:", payload);
-    
+
+        console.log('Sending data:', payload);
+
         try {
             const response = await axios.put(`${API_BASE_URL}/posts/update-post`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-    
-            alert('Post updated successfully!');
+            toast.success('Post updated successfully!');
+            setPostEdit(false);
             console.log(response.data);
-            location.reload();
         } catch (err) {
             console.error('Error updating post:', err);
-            alert('Error updating post.');
+            toast.error('Error updating post!');
         }
     };
 

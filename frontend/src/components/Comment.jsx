@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     comment: yup.string().trim().required('Comment cannot be empty'),
@@ -60,9 +61,10 @@ const Comment = ({ setCommentModal, post_id, fetchPost }) => {
             reset();
             fetchPost();
             fetchComments();
+            toast.success('Comment Completed!');
         } catch (error) {
             console.error('Error posting comment:', error);
-            alert('Failed to add comment');
+            toast.error('Failed to add comment');
         }
     };
 

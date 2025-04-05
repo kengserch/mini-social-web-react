@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 const Register = () => {
     let navigate = useNavigate();
@@ -12,10 +13,7 @@ const Register = () => {
     const schema = yup.object().shape({
         email: yup.string().email('Invalid email format').required('Email is required'),
         username: yup.string().min(6, 'Username must be at least 6 characters').required('Username is required'),
-        password: yup
-            .string()
-            .min(6, 'Password must be at least 6 characters')
-            .required('Password is required'),
+        password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
         confirmpassword: yup
             .string()
             .oneOf([yup.ref('password'), null], 'Passwords must match')
@@ -41,13 +39,13 @@ const Register = () => {
             });
 
             if (response.data.status === 'ok') {
-                alert('Register Success');
+                toast.success('Register Success');
                 navigate('/login');
             } else {
-                alert('Register failed: ' + response.data.message);
+                toast.error('Register failed:' + response.data.message);
             }
         } catch (error) {
-            alert(error.response?.data?.message || 'Register failed. Please try again later.');
+            toast.error(error.response?.data?.message || 'Register failed. Please try again later.');
         }
     };
 

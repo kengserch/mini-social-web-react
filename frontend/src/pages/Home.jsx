@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import { API_BASE_URL } from '../config';
+import { toast } from 'react-toastify';
 
 const Home = () => {
     let navigate = useNavigate();
@@ -21,10 +22,10 @@ const Home = () => {
         if (isAuthenticated && hasProfile) {
             setCreatePost(true);
         } else if (isAuthenticated && !hasProfile) {
-            alert('Please Create Profile first!');
+            toast.error('Please Create Profile first!');
             navigate('/create-profile');
         } else {
-            alert('Please log in to create a post!');
+            toast.info('Please log in to create a post!');
             navigate('/login');
         }
     };
@@ -33,10 +34,10 @@ const Home = () => {
         if (isAuthenticated && hasProfile) {
             setCommentModal(post_id);
         } else if (isAuthenticated && !hasProfile) {
-            alert('Please Create Profile first!');
+            toast.info('Please Create Profile first!');
             navigate('/create-profile');
         } else {
-            alert('Please log in to see comment!');
+            toast.info('Please log in to see comment!');
             navigate('/login');
         }
     };
@@ -65,13 +66,13 @@ const Home = () => {
                 // console.log('Like successful:', response.data);
             } catch (error) {
                 console.error('Error liking post:', error);
-                alert('An error occurred while liking the post.');
+                toast.error('An error occurred while liking the post!');
             }
         } else if (isAuthenticated && !hasProfile) {
-            alert('Please Create Profile first!');
+            toast.info('Please Create Profile first!');
             navigate('/create-profile');
         } else {
-            alert('You need to log in to like posts!');
+            toast.info('You need to log in to like posts!');
             navigate('/login');
         }
     };
@@ -92,7 +93,7 @@ const Home = () => {
 
     useEffect(() => {
         fetchPost();
-    }, [user]);
+    }, [user, postData]);
 
     const filteredPosts = selectedCategory
         ? postData.filter((post) => post.category_name.toLowerCase() === selectedCategory)

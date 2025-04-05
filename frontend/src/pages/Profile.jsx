@@ -12,13 +12,14 @@ const Profile = () => {
 
     const isOwner = id === String(user);
 
+    const fetchData = async () => {
+        const profile = await fetchProfileById(id);
+        setProfileData(profile);
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const profile = await fetchProfileById(id);
-            setProfileData(profile);
-        };
         fetchData();
-    }, [id]);
+    }, [id,profileData]);
 
     const handleProfile = () => {
         setProfile(true);

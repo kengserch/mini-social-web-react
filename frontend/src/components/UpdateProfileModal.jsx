@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     fullName: yup.string().required('Full name is required'),
@@ -52,14 +53,12 @@ const ProfileModal = ({ setProfile, profileData }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            alert('Profile updated successfully!');
+            toast.success('Profile updated successfully!');
             console.log(response.data);
             setProfile(false);
-            location.reload();
         } catch (err) {
             console.error(err);
-            alert('Error updating profile.');
+            toast.error('Error updating profile!');
         }
     };
 

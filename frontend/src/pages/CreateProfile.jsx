@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     fullName: yup.string().required('Full name is required'),
@@ -46,13 +47,12 @@ const CreateProfile = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            alert('Profile created successfully!');
+            toast.success('Profile created successfully!');
             console.log(response.data);
             window.location = '/';
         } catch (err) {
             console.error(err);
-            alert('Error creating profile.');
+            toast.error('Error creating profile.');
         }
     };
 

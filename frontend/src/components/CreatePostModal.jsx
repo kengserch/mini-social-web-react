@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     title: yup.string().required('Title is required'),
@@ -35,8 +36,8 @@ const CreatePostModal = ({ setCreatePost, user }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setValue('post_image', file); 
-            setPreview(URL.createObjectURL(file)); 
+            setValue('post_image', file);
+            setPreview(URL.createObjectURL(file));
         }
     };
 
@@ -51,10 +52,11 @@ const CreatePostModal = ({ setCreatePost, user }) => {
             await axios.post(`${API_BASE_URL}/posts`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            location.reload();
+            toast.success('Created post successfully!');
+            setCreatePost(false)
         } catch (err) {
             console.error(err);
-            alert('Error creating post.');
+            toast.error('Error creating post!');
         }
     };
 
@@ -70,7 +72,6 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                     <div className="flex p-4 flex-col gap-3 justify-center">
                         <h1 className="text-center">Create Post</h1>
 
-                        
                         {preview && (
                             <div className="mt-4">
                                 <img
@@ -81,7 +82,6 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                             </div>
                         )}
 
-                        
                         <div className="w-full">
                             <label className="block mb-2 text-sm text-white">Post Image</label>
                             <input
@@ -115,7 +115,13 @@ const CreatePostModal = ({ setCreatePost, user }) => {
                                     { id: '4', name: 'Game' },
                                 ].map(({ id, name }) => (
                                     <div key={id} className="flex items-center gap-1">
-                                        <input type="radio" value={id} {...register('category_id')} onBlur={() => trigger('category_id')} id={id} />
+                                        <input
+                                            type="radio"
+                                            value={id}
+                                            {...register('category_id')}
+                                            onBlur={() => trigger('category_id')}
+                                            id={id}
+                                        />
                                         <label htmlFor={id} className="text-sm text-white">
                                             {name}
                                         </label>

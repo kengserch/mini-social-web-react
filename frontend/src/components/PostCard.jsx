@@ -2,9 +2,10 @@ import Comment from './Comment';
 import React, { useState, useEffect } from 'react';
 import { TbThumbUp, TbThumbUpFilled, TbDots, TbEdit, TbTrash } from 'react-icons/tb';
 import EditPostModal from './EditPostModal';
-import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
-import { API_BASE_URL } from "../config";
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
+import { toast } from 'react-toastify';
 
 const PostCard = ({
     postData,
@@ -32,10 +33,10 @@ const PostCard = ({
         if (!confirmDelete) return;
         try {
             await axios.delete(`${API_BASE_URL}/posts/${post_id}`);
-            location.reload()
+            toast.success('Delete post successfully!');
         } catch (error) {
             console.error('Error deleting post:', error);
-            alert('Failed to delete the post.');
+            toast.error('Failed to delete the post.');
         }
     };
 
