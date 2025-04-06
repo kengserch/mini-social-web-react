@@ -72,7 +72,7 @@ const Home = () => {
             toast.info('Please Create Profile first!');
             navigate('/create-profile');
         } else {
-            toast.info('You need to log in to like posts!');
+            toast.info('Please log in to like posts!');
             navigate('/login');
         }
     };
@@ -93,7 +93,7 @@ const Home = () => {
 
     useEffect(() => {
         fetchPost();
-    }, [user, postData]);
+    }, [user]);
 
     const filteredPosts = selectedCategory
         ? postData.filter((post) => post.category_name.toLowerCase() === selectedCategory)
@@ -108,7 +108,7 @@ const Home = () => {
                         <button className="px-4 py-2 bg-lime-300 rounded-3xl" onClick={handleCreatePost}>
                             <h1 className="text-black font-bold">Create post</h1>
                         </button>
-                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} />}
+                        {isCreatedPostOpen && <CreatePostModal setCreatePost={setCreatePost} user={user} fetchPost={fetchPost} />}
                     </div>
                     <PostCard
                         postData={filteredPosts}

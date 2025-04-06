@@ -34,6 +34,7 @@ const PostCard = ({
         try {
             await axios.delete(`${API_BASE_URL}/posts/${post_id}`);
             toast.success('Delete post successfully!');
+            fetchPost()
         } catch (error) {
             console.error('Error deleting post:', error);
             toast.error('Failed to delete the post.');

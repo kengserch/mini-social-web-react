@@ -12,7 +12,7 @@ const schema = yup.object().shape({
     post_image: yup.mixed().required('Post image is required'),
 });
 
-const CreatePostModal = ({ setCreatePost, user }) => {
+const CreatePostModal = ({ setCreatePost, user, fetchPost }) => {
     const {
         register,
         handleSubmit,
@@ -54,6 +54,7 @@ const CreatePostModal = ({ setCreatePost, user }) => {
             });
             toast.success('Created post successfully!');
             setCreatePost(false)
+            fetchPost()
         } catch (err) {
             console.error(err);
             toast.error('Error creating post!');
